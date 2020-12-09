@@ -1,5 +1,5 @@
 from PyQt5.QtGui import QPixmap
-from PyQt5.QtWidgets import QApplication, QHBoxLayout, QVBoxLayout, QLabel, QMainWindow, QWidget, QStackedWidget
+from PyQt5.QtWidgets import QApplication, QHBoxLayout, QVBoxLayout, QLabel, QMainWindow, QWidget, QStackedWidget, QStackedLayout
 import sys
 from ProjectPrep.layouts.menuLayout import menuView
 from ProjectPrep.layouts.InputPlayersMenu import InputPlayersView

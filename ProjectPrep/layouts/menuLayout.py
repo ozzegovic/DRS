@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QApplication, QGraphicsView, QGraphicsScene
-from PyQt5.QtWidgets import QGraphicsPixmapItem, QStackedWidget, QPushButton
+from PyQt5.QtWidgets import QGraphicsPixmapItem, QStackedWidget, QStackedLayout, QPushButton
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap
 from ProjectPrep.layouts.InputPlayersMenu import InputPlayersView

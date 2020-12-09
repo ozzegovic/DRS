@@ -2,7 +2,7 @@ from PyQt5.QtWidgets import QApplication, QGraphicsView, QGraphicsScene
 from PyQt5.QtWidgets import QGraphicsPixmapItem, QStackedWidget, QPushButton
 from PyQt5.QtCore import Qt, QPoint
 from PyQt5.QtGui import QPixmap, QPainter
-
+from ProjectPrep.CustomWidgets.InputOkvir import InputOkvir
 
 class InputPlayersView(QGraphicsView):
 
@@ -13,6 +13,7 @@ class InputPlayersView(QGraphicsView):
         self.initUI()
 
     def initUI(self):
+        self.okvir = InputOkvir()
         self.grafickascena = QGraphicsScene()
         self.grafickascena.setSceneRect(0, 0, 1200, 630)
 
@@ -21,8 +22,11 @@ class InputPlayersView(QGraphicsView):
         self.playbutton.clicked.connect(self.drawBoard)
         self.backbutton = QPushButton('Back')
 
+        self.okvir.move(30, 100)
+
         self.grafickascena.addWidget(self.playbutton)
         self.grafickascena.addWidget(self.backbutton)
+        self.grafickascena.addWidget(self.okvir)
 
         self.playbutton.move(500, 500)
         self.backbutton.move(600, 500)
