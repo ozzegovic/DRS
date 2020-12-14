@@ -25,6 +25,8 @@ class InputOkvir(QGraphicsView):
         self.graphicsPixmapItem = QGraphicsPixmapItem(tempImg)
         self.grafickascena.addItem(self.graphicsPixmapItem)
 
+
+
         self.label = QLabel('test')
         self.label.move(33, 11)
         self.label.setStyleSheet('color: yellow; font-weight: bold; background: transparent;')
