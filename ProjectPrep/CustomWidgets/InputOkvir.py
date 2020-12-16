@@ -35,6 +35,7 @@ class InputOkvir(QGraphicsView):
 
         # set default label text
         self.label = QLabel('Car ' + str(self.Car))
+
         self.label.move(33, 11)
         self.label.setStyleSheet('color: yellow; font-weight: bold; background: transparent;')
 
