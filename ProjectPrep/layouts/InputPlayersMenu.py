@@ -1,8 +1,12 @@
 from PyQt5.QtWidgets import QApplication, QGraphicsView, QGraphicsScene
-from PyQt5.QtWidgets import QGraphicsPixmapItem, QStackedWidget, QPushButton
+from PyQt5.QtWidgets import QGraphicsPixmapItem, QStackedWidget, QPushButton, QLabel
 from PyQt5.QtCore import Qt, QPoint
 from PyQt5.QtGui import QPixmap, QPainter
 from ProjectPrep.CustomWidgets.InputOkvir import InputOkvir
+from ProjectPrep.CustomWidgets.CustomButton import StyleButton
+
+addedPlayers = 0
+players = {}  # dictionary {"username" : carNumber}
 
 class InputPlayersView(QGraphicsView):
 
@@ -10,25 +14,43 @@ class InputPlayersView(QGraphicsView):
         super(InputPlayersView, self).__init__()
 
         self.viewlist = centralWidget
+        self.infoLabel = QLabel()
         self.initUI()
 
     def initUI(self):
-        self.okvir = InputOkvir()
+        self.player1 = InputOkvir()
+        self.player2 = InputOkvir()
+        self.player3 = InputOkvir()
+        self.player4 = InputOkvir()
+
         self.grafickascena = QGraphicsScene()
         self.grafickascena.setSceneRect(0, 0, 1200, 630)
 
         self.setbackground()
-        self.playbutton = QPushButton('Play')
+        self.playbutton = StyleButton('PNG/Buttons/Play_BTN.png', 'Play', 40, 40)
         self.playbutton.clicked.connect(self.drawBoard)
-        self.backbutton = QPushButton('Back')
+        self.backbutton = StyleButton('PNG/Buttons/Close_BTN.png', 'Back', 40, 40)
+        self.backbutton.clicked.connect(self.backbuttonClick)
 
-        self.okvir.move(30, 100)
+        # move(left, top)
+        self.player1.move(75, 200)
+        self.player2.move(375, 200)
+        self.player3.move(675, 200)
+        self.player4.move(975, 200)
 
         self.grafickascena.addWidget(self.playbutton)
         self.grafickascena.addWidget(self.backbutton)
-        self.grafickascena.addWidget(self.okvir)
+        self.grafickascena.addWidget(self.player1)
+        self.grafickascena.addWidget(self.player2)
+        self.grafickascena.addWidget(self.player3)
+        self.grafickascena.addWidget(self.player4)
 
-        self.playbutton.move(500, 500)
+        self.infoLabel = QLabel()
+        self.infoLabel.move(500, 400)
+        self.infoLabel.setStyleSheet('color: yellow; font-weight: bold; background: transparent;')
+        self.grafickascena.addWidget(self.infoLabel)
+
+        self.playbutton.move(400, 500)
         self.backbutton.move(600, 500)
 
         self.setScene(self.grafickascena)
@@ -48,5 +70,29 @@ class InputPlayersView(QGraphicsView):
         self.grafickascena.addItem(self.graphicsPixmapItem)
 
     def drawBoard(self):
+        global addedPlayers
+        global players
+        # check added players
+        if self.player1.playerName is not '':
+            players[self.player1.playerName] = self.player1.Car
+            addedPlayers += 1
+        if self.player2.playerName is not '':
+            players[self.player2.playerName] = self.player2.Car
+            addedPlayers += 1
+        if self.player3.playerName is not '':
+            players[self.player3.playerName] = self.player3.Car
+            addedPlayers += 1
+        if self.player4.playerName is not '':
+            players[self.player4.playerName] = self.player4.Car
+            addedPlayers += 1
 
-        self.viewlist.setCurrentWidget(self.viewlist.widget(3))
+        if addedPlayers is 0:
+            self.infoLabel.setText('Please add at least one player.')
+            self.infoLabel.adjustSize()
+        else:
+            self.viewlist.setCurrentWidget(self.viewlist.widget(3))
+
+    def backbuttonClick(self):
+        # back to main menu
+        self.viewlist.setCurrentWidget(self.viewlist.widget(0))
+

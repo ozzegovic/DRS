@@ -8,6 +8,7 @@ from ProjectPrep.CustomWidgets.HUD import HUD
 from ProjectPrep.layouts.InputPlayersMenu import InputPlayersView
 from ProjectPrep.layouts.SettingsMenu import SettingsView
 from ProjectPrep.CustomWidgets.CustomButton import StyleButton
+from ProjectPrep.layouts.boardNotifier import Worker
 
 class Boardgame(QGraphicsView):
 
@@ -16,6 +17,9 @@ class Boardgame(QGraphicsView):
         super(Boardgame, self).__init__()
         self.hud = HUD()
         self.initUI()
+        self.worker = Worker()
+        self.worker.update.connect(self.movepicture)
+        #self.worker.start() // Pokreni ovo na tajmer.
 
         self.worker = Worker()
         self.worker.update.connect(self.movepicture)
@@ -34,6 +38,7 @@ class Boardgame(QGraphicsView):
 
         self.mapContinue = QGraphicsPixmapItem(self.tempImg)
         self.grafickascena.addItem(self.mapContinue)
+
 
         self.grafickascena.addWidget(self.hud).moveBy(0,380)
 
@@ -55,4 +60,5 @@ class Boardgame(QGraphicsView):
         self.mapContinue.setY(res1)
 
         if self.graphicsPixmapItem.y() == -self.tempImg.height():
+
             self.graphicsPixmapItem.setY(0)
