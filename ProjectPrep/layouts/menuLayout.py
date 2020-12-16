@@ -5,6 +5,8 @@ from PyQt5.QtGui import QPixmap
 from ProjectPrep.layouts.InputPlayersMenu import InputPlayersView
 from ProjectPrep.layouts.SettingsMenu import SettingsView
 from ProjectPrep.CustomWidgets.CustomButton import StyleButton
+import  sys
+
 
 class menuView(QGraphicsView):
 
@@ -26,6 +28,7 @@ class menuView(QGraphicsView):
         self.settingsbutton = StyleButton('PNG/Buttons/Settings_BTN.png', 'Settings', 40, 40)
         self.settingsbutton.clicked.connect(self.gotoSettingsMenu)
         self.exitbtn = StyleButton('PNG/Buttons/Close_BTN.png', 'Exit', 40, 40)
+        self.exitbtn.clicked.connect(self.closeThis)
 
         self.grafickascena.addWidget(self.playbutton)
         self.grafickascena.addWidget(self.settingsbutton)
@@ -52,3 +55,5 @@ class menuView(QGraphicsView):
 
         self.viewlist.setCurrentWidget(self.viewlist.widget(1))
 
+    def closeThis(self):
+        sys.exit()

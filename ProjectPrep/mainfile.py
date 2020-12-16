@@ -10,10 +10,12 @@ class MainWindow(QMainWindow):
 
     def __init__(self):
 
+
         super().__init__()
         self.centralWidget = QStackedWidget()
 
         self.board = Boardgame()
+
         self.mainmenu = menuView(self.centralWidget)
         self.Settings = SettingsView(self.centralWidget)
         self.InputSettings = InputPlayersView(self.centralWidget)
