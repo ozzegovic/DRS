@@ -73,20 +73,20 @@ class InputPlayersView(QGraphicsView):
         global addedPlayers
         global players
         # check added players
-        if self.player1.playerName is not '':
+        if self.player1.playerName != '':
             players[self.player1.playerName] = self.player1.Car
             addedPlayers += 1
-        if self.player2.playerName is not '':
+        if self.player2.playerName != '':
             players[self.player2.playerName] = self.player2.Car
             addedPlayers += 1
-        if self.player3.playerName is not '':
+        if self.player3.playerName != '':
             players[self.player3.playerName] = self.player3.Car
             addedPlayers += 1
-        if self.player4.playerName is not '':
+        if self.player4.playerName != '':
             players[self.player4.playerName] = self.player4.Car
             addedPlayers += 1
 
-        if addedPlayers is 0:
+        if addedPlayers == 0:
             self.infoLabel.setText('Please add at least one player.')
             self.infoLabel.adjustSize()
         else:

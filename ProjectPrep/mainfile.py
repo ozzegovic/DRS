@@ -5,6 +5,7 @@ from ProjectPrep.layouts.menuLayout import menuView
 from ProjectPrep.layouts.InputPlayersMenu import InputPlayersView
 from ProjectPrep.layouts.SettingsMenu import SettingsView
 from ProjectPrep.layouts.Boardgame import Boardgame
+from ProjectPrep.layouts.pauseView import pauseView
 
 class MainWindow(QMainWindow):
 
@@ -14,8 +15,7 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.centralWidget = QStackedWidget()
 
-        self.board = Boardgame()
-
+        self.board = Boardgame(self.centralWidget)
         self.mainmenu = menuView(self.centralWidget)
         self.Settings = SettingsView(self.centralWidget)
         self.InputSettings = InputPlayersView(self.centralWidget)
