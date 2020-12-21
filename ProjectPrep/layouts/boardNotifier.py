@@ -23,12 +23,17 @@ class Worker(QObject):
 
     def start(self):
         # Start the thread
+        self.killThread = False
         self.thread.start()
 
     @pyqtSlot()
     def work(self):  # A slot with no params
 
         while True:
+            if self.killThread == True:
+                self.finished.emit()
+                return
+
             self.update.emit()
             time.sleep(0.01)
 
