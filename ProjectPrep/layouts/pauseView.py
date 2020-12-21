@@ -1,8 +1,6 @@
-from PyQt5.QtWidgets import QPushButton, QGraphicsScene, QGraphicsView, QGraphicsItem, QLineEdit, QGraphicsPixmapItem, QFrame, QLabel, QStackedWidget, QGraphicsBlurEffect
-from PyQt5 import QtGui
-from PyQt5.QtCore import QSize, QEvent, pyqtSlot, Qt, QPoint
-from PyQt5.QtGui import QPixmap, QPalette, QBrush, QImage, QPainter
-import time
+from PyQt5.QtWidgets import QGraphicsScene, QGraphicsView, QGraphicsPixmapItem, QLabel, QVBoxLayout
+from PyQt5.QtCore import Qt, QPoint
+from PyQt5.QtGui import QPixmap,  QPainter
 from ProjectPrep.CustomWidgets.CustomButton import StyleButton
 
 
@@ -24,12 +22,22 @@ class pauseView(QGraphicsView):
         self.mainmenubutton = StyleButton('PNG/Buttons/Settings_BTN.png', 'Main menu', 40, 40)
         self.mainmenubutton.clicked.connect(self.mainmenubuttonclick)
 
-        self.grafickascena.addWidget(self.resumebutton)
-        self.grafickascena.addWidget(self.mainmenubutton)
+        self.holder = QVBoxLayout()
+        self.buttonsLayout = QVBoxLayout()
 
-        self.resumebutton.move(50, 10)
-        self.mainmenubutton.move(50, 80)
+        self.buttonsLayout.addWidget(self.resumebutton)
+        self.buttonsLayout.addWidget(self.mainmenubutton)
+        self.buttonsLayout.setAlignment(Qt.AlignCenter)
 
+        self.titleLabel = QLabel()
+        self.titleLabel.setText("GAME PAUSED")
+        self.titleLabel.setStyleSheet('color: yellow; font-weight: bold; background: transparent;')
+        self.titleLabel.setAlignment(Qt.AlignCenter)
+
+        self.holder.addWidget(self.titleLabel)
+        self.holder.addLayout(self.buttonsLayout)
+
+        self.setLayout(self.holder)
         self.setScene(self.grafickascena)
 
     def resumebuttonclick(self):
