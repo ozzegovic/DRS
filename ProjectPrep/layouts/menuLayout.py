@@ -49,7 +49,7 @@ class menuView(QGraphicsView):
 
     def playbuttonclick(self):
 
-        self.viewlist.setCurrentWidget(self.viewlist.widget(2))
+        self.viewlist.setCurrentWidget(self.viewlist.widget(3))
 
     def gotoSettingsMenu(self):
 

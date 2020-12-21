@@ -41,15 +41,15 @@ class pauseView(QGraphicsView):
         self.setScene(self.grafickascena)
 
     def resumebuttonclick(self):
-        #self.viewlist.widget(3).grafickascena.removeItem(self.viewlist.widget(3).backgroundItem)
-        self.viewlist.widget(3).pauseButton.setEnabled(True)
-        self.viewlist.widget(3).worker.start()
+        #self.viewlist.widget(2).grafickascena.removeItem(self.viewlist.widget(3).backgroundItem)
+        self.viewlist.widget(2).pauseButton.setEnabled(True)
+        self.viewlist.widget(2).worker.start()
         self.hide()
 
     def mainmenubuttonclick(self):
-        #self.viewlist.widget(3).grafickascena.removeItem(self.viewlist.widget(3).backgroundItem)
-        self.viewlist.widget(3).pauseButton.setEnabled(True)
-        self.viewlist.widget(3).worker.start()
+        #self.viewlist.widget(2).grafickascena.removeItem(self.viewlist.widget(3).backgroundItem)
+        self.viewlist.widget(2).pauseButton.setEnabled(True)
+        self.viewlist.widget(2).worker.start()
         self.hide()
         # back to main menu
         self.viewlist.setCurrentWidget(self.viewlist.widget(0))
