@@ -31,7 +31,7 @@ class NumberOfPlayersView(QGraphicsView):
         self.fourplayerbutton = StyleButton('PNG/Buttons/Play_BTN.png', '4 players', 40, 40)
         self.fourplayerbutton.clicked.connect(self.fourplayerbuttonclick)
 
-        self.backbutton = StyleButton('PNG/Buttons/Play_BTN.png', 'Back', 40, 40)
+        self.backbutton = StyleButton('PNG/Buttons/Close_BTN.png', 'Back', 40, 40)
         self.backbutton.clicked.connect(self.backbuttonclick)
 
 

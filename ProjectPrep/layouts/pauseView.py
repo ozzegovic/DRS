@@ -19,7 +19,7 @@ class pauseView(QGraphicsView):
         self.setbackground()
         self.resumebutton = StyleButton('PNG/Buttons/Play_BTN.png', 'Resume', 40, 40)
         self.resumebutton.clicked.connect(self.resumebuttonclick)
-        self.mainmenubutton = StyleButton('PNG/Buttons/Settings_BTN.png', 'Main menu', 40, 40)
+        self.mainmenubutton = StyleButton('PNG/Buttons/Close_BTN.png', 'Main menu', 40, 40)
         self.mainmenubutton.clicked.connect(self.mainmenubuttonclick)
 
         self.holder = QVBoxLayout()
