@@ -1,27 +1,30 @@
-from PyQt5.QtWidgets import QApplication, QGraphicsView, QGraphicsScene
+from PyQt5.QtWidgets import QApplication, QGraphicsView, QGraphicsScene, QVBoxLayout, QHBoxLayout
 from PyQt5.QtWidgets import QGraphicsPixmapItem, QStackedWidget, QPushButton, QLabel
 from PyQt5.QtCore import Qt, QPoint
 from PyQt5.QtGui import QPixmap, QPainter
 from ProjectPrep.CustomWidgets.InputOkvir import InputOkvir
 from ProjectPrep.CustomWidgets.CustomButton import StyleButton
 
-addedPlayers = 0
+
 players = {}  # dictionary {"username" : carNumber}
+
 
 class InputPlayersView(QGraphicsView):
 
-    def __init__(self, centralWidget: QStackedWidget):
+    def __init__(self, centralWidget: QStackedWidget, number):
         super(InputPlayersView, self).__init__()
 
         self.viewlist = centralWidget
+        self.players = []  # array of inputOkvir, get inputs from previous view
+        global players
+        players = {}  # dictionary reset so that previously added players wouldn't be kept
         self.infoLabel = QLabel()
-        self.initUI()
+        self.initUI(number)
 
-    def initUI(self):
-        self.player1 = InputOkvir()
-        self.player2 = InputOkvir()
-        self.player3 = InputOkvir()
-        self.player4 = InputOkvir()
+    def initUI(self, number):
+
+        for i in range(number):
+            self.players.append(InputOkvir(i))
 
         self.grafickascena = QGraphicsScene()
         self.grafickascena.setSceneRect(0, 0, 1200, 630)
@@ -32,27 +35,33 @@ class InputPlayersView(QGraphicsView):
         self.backbutton = StyleButton('PNG/Buttons/Close_BTN.png', 'Back', 40, 40)
         self.backbutton.clicked.connect(self.backbuttonClick)
 
-        # move(left, top)
-        self.player1.move(75, 200)
-        self.player2.move(375, 200)
-        self.player3.move(675, 200)
-        self.player4.move(975, 200)
+        self.holder = QVBoxLayout()
+        self.playersLayout = QHBoxLayout()
+        self.buttonsLayout = QHBoxLayout()
 
-        self.grafickascena.addWidget(self.playbutton)
-        self.grafickascena.addWidget(self.backbutton)
-        self.grafickascena.addWidget(self.player1)
-        self.grafickascena.addWidget(self.player2)
-        self.grafickascena.addWidget(self.player3)
-        self.grafickascena.addWidget(self.player4)
+        self.titleLabel = QLabel()
+        self.titleLabel.setText("ENTER A NAME AND CHOOSE A CAR:")
+        self.titleLabel.setStyleSheet('color: yellow; font-weight: bold; background: transparent;')
+        self.titleLabel.setAlignment(Qt.AlignCenter)
+
+        for i in range(number):
+            self.playersLayout.addWidget(self.players[i])
+        self.playersLayout.setAlignment(Qt.AlignCenter)
+
+        self.buttonsLayout.addWidget(self.playbutton)
+        self.buttonsLayout.addWidget(self.backbutton)
+        self.buttonsLayout.setAlignment(Qt.AlignCenter)
 
         self.infoLabel = QLabel()
-        self.infoLabel.move(500, 400)
         self.infoLabel.setStyleSheet('color: yellow; font-weight: bold; background: transparent;')
-        self.grafickascena.addWidget(self.infoLabel)
+        self.infoLabel.setAlignment(Qt.AlignCenter)
 
-        self.playbutton.move(400, 500)
-        self.backbutton.move(600, 500)
+        self.holder.addWidget(self.titleLabel)
+        self.holder.addLayout(self.playersLayout)
+        self.holder.addWidget(self.infoLabel)
+        self.holder.addLayout(self.buttonsLayout)
 
+        self.setLayout(self.holder)
         self.setScene(self.grafickascena)
 
     def setbackground(self):
@@ -70,29 +79,29 @@ class InputPlayersView(QGraphicsView):
         self.grafickascena.addItem(self.graphicsPixmapItem)
 
     def drawBoard(self):
-        global addedPlayers
-        global players
+        self.validated = True
         # check added players
-        if self.player1.playerName != '':
-            players[self.player1.playerName] = self.player1.Car
-            addedPlayers += 1
-        if self.player2.playerName != '':
-            players[self.player2.playerName] = self.player2.Car
-            addedPlayers += 1
-        if self.player3.playerName != '':
-            players[self.player3.playerName] = self.player3.Car
-            addedPlayers += 1
-        if self.player4.playerName != '':
-            players[self.player4.playerName] = self.player4.Car
-            addedPlayers += 1
+        # username must be unique and not empty
+        for i in range(len(self.players)):
+            if self.players[i].playerName != '':
+                global players
+                if players.get(self.players[i].playerName) == None:
+                    players[self.players[i].playerName] = self.players[i].Car
+                else:
+                    # key already exists
+                    self.validated = False
+            else:
+                self.validated = False
 
-        if addedPlayers == 0:
-            self.infoLabel.setText('Please add at least one player.')
+        if self.validated == False:
+            self.infoLabel.setText('All players must have a unique name.')
             self.infoLabel.adjustSize()
         else:
-            self.viewlist.setCurrentWidget(self.viewlist.widget(3))
+            self.viewlist.setCurrentWidget(self.viewlist.widget(2))
 
     def backbuttonClick(self):
-        # back to main menu
-        self.viewlist.setCurrentWidget(self.viewlist.widget(0))
+        #remove created widget
+        self.viewlist.removeWidget(self.viewlist.widget(4))
+        # back to input number of players
+        self.viewlist.setCurrentWidget(self.viewlist.widget(3))
 

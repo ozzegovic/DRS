@@ -19,7 +19,7 @@ class pauseView(QGraphicsView):
         self.setbackground()
         self.resumebutton = StyleButton('PNG/Buttons/Play_BTN.png', 'Resume', 40, 40)
         self.resumebutton.clicked.connect(self.resumebuttonclick)
-        self.mainmenubutton = StyleButton('PNG/Buttons/Settings_BTN.png', 'Main menu', 40, 40)
+        self.mainmenubutton = StyleButton('PNG/Buttons/Close_BTN.png', 'Main menu', 40, 40)
         self.mainmenubutton.clicked.connect(self.mainmenubuttonclick)
 
         self.holder = QVBoxLayout()
@@ -41,16 +41,18 @@ class pauseView(QGraphicsView):
         self.setScene(self.grafickascena)
 
     def resumebuttonclick(self):
-        #self.viewlist.widget(3).grafickascena.removeItem(self.viewlist.widget(3).backgroundItem)
-        self.viewlist.widget(3).pauseButton.setEnabled(True)
-        self.viewlist.widget(3).worker.start()
+        #self.viewlist.widget(2).grafickascena.removeItem(self.viewlist.widget(3).backgroundItem)
+        self.viewlist.widget(2).pauseButton.setEnabled(True)
+        self.viewlist.widget(2).worker.start()
         self.hide()
 
     def mainmenubuttonclick(self):
-        #self.viewlist.widget(3).grafickascena.removeItem(self.viewlist.widget(3).backgroundItem)
-        self.viewlist.widget(3).pauseButton.setEnabled(True)
-        self.viewlist.widget(3).worker.start()
+        #self.viewlist.widget(2).grafickascena.removeItem(self.viewlist.widget(3).backgroundItem)
+        self.viewlist.widget(2).pauseButton.setEnabled(True)
+        self.viewlist.widget(2).worker.start()
         self.hide()
+        #remove created InputPlayersView widget
+        self.viewlist.removeWidget(self.viewlist.widget(4))
         # back to main menu
         self.viewlist.setCurrentWidget(self.viewlist.widget(0))
 

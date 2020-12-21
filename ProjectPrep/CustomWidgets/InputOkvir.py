@@ -5,17 +5,14 @@ from PyQt5.QtGui import QPixmap, QPalette, QBrush, QImage
 import time
 from ProjectPrep.CustomWidgets.CustomButton import StyleButton
 
-playerCounter = 0
-carChoice = 1
 
 class InputOkvir(QGraphicsView):
 
-    def __init__(self):
+    def __init__(self, number):
         super().__init__()
-        global playerCounter
-        playerCounter = playerCounter + 1
+        self.playercounter = number + 1  # to avoid 'Player 0' name
         self.playerName = ''
-        self.Car = carChoice
+        self.Car = 1  # default car choice is 1
         self.graphicsPixmapItemCar = QGraphicsPixmapItem()
         self.initUI()
 
@@ -60,7 +57,7 @@ class InputOkvir(QGraphicsView):
 
         self.playerNameEdit = QLineEdit()
         self.playerNameEdit.resize(130, 30)
-        self.playerNameEdit.setText('Player ' + str(playerCounter))
+        self.playerNameEdit.setText('Player ' + str(self.playercounter))
         self.playerNameEdit.editingFinished.connect(self.onChanged)
         self.playerNameEdit.move(10, 160)
         self.playerNameEdit.setStyleSheet('color: yellow; font-weight: bold; background: transparent;')
@@ -73,13 +70,14 @@ class InputOkvir(QGraphicsView):
         self.playerName = self.playerNameEdit.text()
 
     def nextButtonClicked(self):
-        global carChoice
         # generate path to the next car based on the current car
-        carChoice = ((carChoice + 1) % 4)
-        if carChoice == 0:
-            carChoice = 1
-        self.Car = carChoice
-        path = 'PNG/Car_' + str(carChoice) + '_Main_Positions/Car_' + str(carChoice) + '_01'
+        self.tempCar = ((self.Car + 1) % 4)
+        if self.tempCar == 0:
+            self.Car = 1
+        else:
+            self.Car = self.tempCar
+
+        path = 'PNG/Car_' + str(self.Car) + '_Main_Positions/Car_' + str(self.Car) + '_01'
 
         # replace car image
         carImg = QPixmap(path)
@@ -90,16 +88,16 @@ class InputOkvir(QGraphicsView):
         self.grafickascena.addItem(self.graphicsPixmapItemCar)
 
         # change label text above the image
-        self.label.setText('Car ' + str(carChoice))
+        self.label.setText('Car ' + str(self.Car))
 
     def previousButtonClicked(self):
-        global carChoice
         # generate path to the previous car based on the current car
-        carChoice = ((carChoice - 1) % 4)
-        if carChoice == 0:
-            carChoice = 3
-        self.Car = carChoice
-        path = 'PNG/Car_' + str(carChoice) + '_Main_Positions/Car_' + str(carChoice) + '_01'
+        self.tempCar = ((self.Car  - 1) % 4)
+        if self.tempCar == 0:
+            self.Car = 3
+        else:
+            self.Car = self.tempCar
+        path = 'PNG/Car_' + str(self.Car) + '_Main_Positions/Car_' + str(self.Car) + '_01'
 
         # replace car image
         carImg = QPixmap(path)
@@ -110,6 +108,6 @@ class InputOkvir(QGraphicsView):
         self.grafickascena.addItem(self.graphicsPixmapItemCar)
 
         # change label text above the image
-        self.label.setText('Car ' + str(carChoice))
+        self.label.setText('Car ' + str(self.Car))
 
 
