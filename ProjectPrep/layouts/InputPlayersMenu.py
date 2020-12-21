@@ -16,6 +16,8 @@ class InputPlayersView(QGraphicsView):
 
         self.viewlist = centralWidget
         self.players = []  # array of inputOkvir, get inputs from previous view
+        global players
+        players = {}  # dictionary reset so that previously added players wouldn't be kept
         self.infoLabel = QLabel()
         self.initUI(number)
 
