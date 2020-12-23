@@ -19,6 +19,8 @@ class pauseView(QGraphicsView):
         self.setbackground()
         self.resumebutton = StyleButton('PNG/Buttons/Play_BTN.png', 'Resume', 40, 40)
         self.resumebutton.clicked.connect(self.resumebuttonclick)
+        self.replaybutton = StyleButton('PNG/Buttons/Replay_BTN.png', 'Replay', 40, 40)
+        self.replaybutton.clicked.connect(self.replaybuttonclick)
         self.mainmenubutton = StyleButton('PNG/Buttons/Close_BTN.png', 'Main menu', 40, 40)
         self.mainmenubutton.clicked.connect(self.mainmenubuttonclick)
 
@@ -26,6 +28,7 @@ class pauseView(QGraphicsView):
         self.buttonsLayout = QVBoxLayout()
 
         self.buttonsLayout.addWidget(self.resumebutton)
+        self.buttonsLayout.addWidget(self.replaybutton)
         self.buttonsLayout.addWidget(self.mainmenubutton)
         self.buttonsLayout.setAlignment(Qt.AlignCenter)
 
@@ -42,16 +45,24 @@ class pauseView(QGraphicsView):
 
     def resumebuttonclick(self):
         #self.viewlist.widget(2).grafickascena.removeItem(self.viewlist.widget(3).backgroundItem)
-        self.viewlist.widget(2).pauseButton.setEnabled(True)
-        self.viewlist.widget(2).worker.start()
+        self.boardgame = self.viewlist.widget(2)
+        self.boardgame.pauseButton.setEnabled(True)
+        self.boardgame.activateThreads()
+        self.hide()
+    def replaybuttonclick(self):
+        self.boardgame = self.viewlist.widget(2)
+        self.boardgame.pauseButton.setEnabled(True)
+        self.boardgame.restart()
         self.hide()
 
     def mainmenubuttonclick(self):
         #self.viewlist.widget(2).grafickascena.removeItem(self.viewlist.widget(3).backgroundItem)
         self.viewlist.widget(2).pauseButton.setEnabled(True)
-        self.viewlist.widget(2).worker.start()
+        self.viewlist.widget(2).worker.killThread = True
         self.hide()
-        #remove created InputPlayersView widget
+        # remove added players from the dictionary
+        self.inputPlayers = self.viewlist.widget(4)
+        self.inputPlayers.resetPlayers()
         # back to main menu
         self.viewlist.setCurrentWidget(self.viewlist.widget(0))
 

@@ -21,7 +21,7 @@ class Boardgame(QGraphicsView):
         self.obstacles = [Obstacle(100), Obstacle(100),Obstacle(100), Obstacle(100)]
         self.previous = 0
         self.viewlist = centralWidget
-        self.backgroundItem = QGraphicsPixmapItem()
+        #self.backgroundItem = QGraphicsPixmapItem()
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.initUI()
@@ -31,12 +31,21 @@ class Boardgame(QGraphicsView):
         self.worker.update.connect(self.moveObstacle)
 
     def activateThreads(self):
-
-        self.setStartPositions()
-        self.worker.start()
+        self.worker.start() # resume option, no reseting obstacle position
 
     def setStartPositions(self):
-        pass # to be implemented
+        self.obstacles[0].setY(-200)
+        self.obstacles[0].setX(170)
+        self.obstacles[1].setY(-200)
+        self.obstacles[1].setX(500)
+        self.obstacles[2].setY(-600)
+        self.obstacles[2].setX(400)
+        self.obstacles[3].setY(-600)
+        self.obstacles[3].setX(720)
+
+    def restart(self):
+        self.setStartPositions() # reset option, resets all the positions and starts the thread again
+        self.worker.start()
 
     def initUI(self):
 
@@ -57,14 +66,8 @@ class Boardgame(QGraphicsView):
         self.grafickascena.addItem(self.obstacles[1])
         self.grafickascena.addItem(self.obstacles[2])
         self.grafickascena.addItem(self.obstacles[3])
-        self.obstacles[0].setY(-200)
-        self.obstacles[0].setX(170)
-        self.obstacles[1].setY(-200)
-        self.obstacles[1].setX(500)
-        self.obstacles[2].setY(-600)
-        self.obstacles[2].setX(400)
-        self.obstacles[3].setY(-600)
-        self.obstacles[3].setX(720)
+
+        #self.setStartPositions() #restart se zove na play button click pa ne treba ovde
 
         self.grafickascena.addWidget(self.hud).setY(self.grafickascena.height() - self.hud.height())
 
