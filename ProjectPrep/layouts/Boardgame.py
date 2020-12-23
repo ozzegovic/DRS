@@ -5,6 +5,7 @@ from PyQt5.QtCore import Qt, pyqtSlot, QPoint
 from PyQt5.QtGui import QPixmap, QPainter
 from ProjectPrep.CustomWidgets.ButtonNotifier import Worker
 from ProjectPrep.CustomWidgets.HUD import HUD
+from ProjectPrep.CustomWidgets.player import Player
 from ProjectPrep.layouts.InputPlayersMenu import InputPlayersView
 from ProjectPrep.layouts.SettingsMenu import SettingsView
 from ProjectPrep.CustomWidgets.CustomButton import StyleButton
@@ -62,6 +63,10 @@ class Boardgame(QGraphicsView):
         self.grafickascena.addItem(self.mapContinue)
         self.graphicsPixmapItem.setY(-self.tempImg.height())
 
+        self.player = Player('PNG/Car_1_Main_Positions/Car_1_01.png')
+        self.player.moveBy(550, 400)
+
+        self.grafickascena.addItem(self.player)
         self.grafickascena.addItem(self.obstacles[0])
         self.grafickascena.addItem(self.obstacles[1])
         self.grafickascena.addItem(self.obstacles[2])
@@ -120,3 +125,9 @@ class Boardgame(QGraphicsView):
             Ob.hide()
         else:
             Ob.show()
+
+    def keyPressEvent(self, event):
+        self.player.keyPressEvent(event)
+
+    def keyReleaseEvent(self, event):
+        self.player.keyReleaseEvent(event)
