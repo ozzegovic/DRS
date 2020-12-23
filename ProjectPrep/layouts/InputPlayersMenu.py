@@ -6,8 +6,6 @@ from ProjectPrep.CustomWidgets.InputOkvir import InputOkvir
 from ProjectPrep.CustomWidgets.CustomButton import StyleButton
 
 
-#players = {}  # dictionary {"username" : carNumber}
-
 
 class InputPlayersView(QGraphicsView):
 
@@ -99,7 +97,6 @@ class InputPlayersView(QGraphicsView):
                 else:
                     # key already exists
                     self.validated = False
-                print(self.players)
             else:
                 self.validated = False
 
