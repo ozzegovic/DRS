@@ -17,7 +17,7 @@ class NumberOfPlayersView(QGraphicsView):
     def initUI(self):
 
         self.grafickascena = QGraphicsScene()
-        self.grafickascena.setSceneRect(0, 0, 1200, 630)
+        self.grafickascena.setSceneRect(0, 0, 1000, 850)
 
         self.setbackground()
         self.oneplayerbutton = StyleButton('PNG/Buttons/Play_BTN.png', '1 player', 40, 40)
@@ -33,7 +33,6 @@ class NumberOfPlayersView(QGraphicsView):
 
         self.backbutton = StyleButton('PNG/Buttons/Close_BTN.png', 'Back', 40, 40)
         self.backbutton.clicked.connect(self.backbuttonclick)
-
 
         self.holder = QVBoxLayout()
         self.playersLayout1 = QHBoxLayout()
@@ -77,24 +76,24 @@ class NumberOfPlayersView(QGraphicsView):
 
     def oneplayerbuttonclick(self):
         # create widget with 1 car
-        self.input = InputPlayersView(self.viewlist, 1)
-        self.viewlist.addWidget(self.input)
+        self.input = self.viewlist.widget(4)
+        self.input.initFrames(1)
         self.viewlist.setCurrentWidget(self.input) # 4. element view liste (uvek ce InputPlayersView biti na 4. jer se brise kada odemo unazad)
 
     def twoplayerbuttonclick(self):
         # create widget with 2 cars
-        self.input = InputPlayersView(self.viewlist, 2)
-        self.viewlist.addWidget(self.input)
+        self.input = self.viewlist.widget(4)
+        self.input.initFrames(2)
         self.viewlist.setCurrentWidget(self.input)  # 4. element view liste
     def threeplayerbuttonclick(self):
         # create widget with 3 cars
-        self.input = InputPlayersView(self.viewlist, 3)
-        self.viewlist.addWidget(self.input)
-        self.viewlist.setCurrentWidget(self.input)  # 4. element view liste
+        self.input = self.viewlist.widget(4)
+        self.input.initFrames(3)
+        self.viewlist.setCurrentWidget(self.input) # 4. element view liste
     def fourplayerbuttonclick(self):
         # create widget with 4 cars
-        self.input = InputPlayersView(self.viewlist, 4)
-        self.viewlist.addWidget(self.input)
+        self.input = self.viewlist.widget(4)
+        self.input.initFrames(4)
         self.viewlist.setCurrentWidget(self.input)  # 4. element view liste
 
     def backbuttonclick(self):

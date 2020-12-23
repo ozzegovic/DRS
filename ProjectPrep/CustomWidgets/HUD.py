@@ -11,7 +11,7 @@ class HUD(QGraphicsView):
         super(HUD, self).__init__()
         self.scene = QGraphicsScene()
         self.label = QLabel('Level\n\n3')
-        self.label.setFixedSize(300, 250)
+        self.label.setFixedWidth(300)
         self.label.setFont(QFont('Ariel', 25))
         self.label.setAlignment(Qt.AlignCenter)
 
@@ -19,8 +19,8 @@ class HUD(QGraphicsView):
         self.initUI()
 
     def initUI(self):
-        self.setStyleSheet("background: red")
-        self.scene.setSceneRect(0, 0, 1200, 250)
+        self.setStyleSheet("background: transparent")
+        self.scene.setSceneRect(0, 0, 1000, 223)
 
         tempImg = QPixmap('PNG/9c49087c09fd07a10ae3887a7825f389.jpg')
         tempImg = tempImg.scaled(self.scene.width(), self.scene.height())
@@ -34,15 +34,18 @@ class HUD(QGraphicsView):
 
         self.graphicsPixmapItem = QGraphicsPixmapItem(new_pix)
         self.scene.addItem(self.graphicsPixmapItem)
-
-
         self.label.setStyleSheet('color: white; font-weight: bold; background: transparent;')
 
-        self.scene.addWidget(self.label).moveBy(20,0)
+        self.hbox = QHBoxLayout()
+
+        self.hbox.addWidget(self.label)
+        self.scene.addWidget(self.label)
 
         for i in range(4):
             okvir = HUDOkvir('Player {}'.format(i))
             self.players.append(okvir)
-            self.scene.addWidget(okvir).moveBy(210*i+350, 35)
+            self.hbox.addWidget(okvir)
 
+        self.setFrameShape(QFrame.NoFrame)
+        self.setLayout(self.hbox)
         self.setScene(self.scene)

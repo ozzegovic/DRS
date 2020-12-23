@@ -12,7 +12,7 @@ class StyleButton(QPushButton):
 
         self.setText("  " + text)
         self.setStyleSheet("*{background-color: transparent; font: 24px Arial, sans-serif; "
-                           "color: white; width: 200px; Text-align:left;} "
+                           "color: white; Text-align:left;} "
                            "StyleButton:hover "
                            "{ color: purple; border-radius: 22px; background: rgba(255, 150, 0, 0.3);}")
 

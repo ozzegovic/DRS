@@ -20,7 +20,7 @@ class menuView(QGraphicsView):
     def initUI(self):
 
         self.grafickascena = QGraphicsScene()
-        self.grafickascena.setSceneRect(0, 0, 1200, 630)
+        self.grafickascena.setSceneRect(0, 0, 1000, 850)
 
         self.setbackground()
         self.playbutton = StyleButton('PNG/Buttons/Play_BTN.png', 'Play', 40, 40)

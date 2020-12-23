@@ -52,7 +52,6 @@ class pauseView(QGraphicsView):
         self.viewlist.widget(2).worker.start()
         self.hide()
         #remove created InputPlayersView widget
-        self.viewlist.removeWidget(self.viewlist.widget(4))
         # back to main menu
         self.viewlist.setCurrentWidget(self.viewlist.widget(0))
 

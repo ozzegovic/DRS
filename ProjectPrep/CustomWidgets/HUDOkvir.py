@@ -27,9 +27,9 @@ class HUDOkvir(QGraphicsView):
 
         #slika na okviru za hud
         img = QPixmap('PNG/Car_1_Main_Positions/Car_1_01.png')
-        img = img.scaled(130, 100)
+        img = img.scaled(100, 120)
         self.image = QGraphicsPixmapItem(img)
-        self.image.moveBy(10,40)
+        self.image.moveBy(25, 30)
         self.grafickascena.addItem(self.image)
 
         for i in range(3):

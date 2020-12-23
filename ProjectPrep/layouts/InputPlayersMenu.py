@@ -11,7 +11,7 @@ players = {}  # dictionary {"username" : carNumber}
 
 class InputPlayersView(QGraphicsView):
 
-    def __init__(self, centralWidget: QStackedWidget, number):
+    def __init__(self, centralWidget: QStackedWidget):
         super(InputPlayersView, self).__init__()
 
         self.viewlist = centralWidget
@@ -19,15 +19,12 @@ class InputPlayersView(QGraphicsView):
         global players
         players = {}  # dictionary reset so that previously added players wouldn't be kept
         self.infoLabel = QLabel()
-        self.initUI(number)
+        self.initUI()
 
-    def initUI(self, number):
-
-        for i in range(number):
-            self.players.append(InputOkvir(i))
+    def initUI(self):
 
         self.grafickascena = QGraphicsScene()
-        self.grafickascena.setSceneRect(0, 0, 1200, 630)
+        self.grafickascena.setSceneRect(0, 0, 1000, 850)
 
         self.setbackground()
         self.playbutton = StyleButton('PNG/Buttons/Play_BTN.png', 'Play', 40, 40)
@@ -44,10 +41,6 @@ class InputPlayersView(QGraphicsView):
         self.titleLabel.setStyleSheet('color: yellow; font-weight: bold; background: transparent;')
         self.titleLabel.setAlignment(Qt.AlignCenter)
 
-        for i in range(number):
-            self.playersLayout.addWidget(self.players[i])
-        self.playersLayout.setAlignment(Qt.AlignCenter)
-
         self.buttonsLayout.addWidget(self.playbutton)
         self.buttonsLayout.addWidget(self.backbutton)
         self.buttonsLayout.setAlignment(Qt.AlignCenter)
@@ -63,6 +56,20 @@ class InputPlayersView(QGraphicsView):
 
         self.setLayout(self.holder)
         self.setScene(self.grafickascena)
+
+    def initFrames(self, number):
+
+        for okvir in self.players:
+            okvir.deleteLater()
+
+        self.players.clear()
+
+        for i in range(number):
+            self.players.append(InputOkvir(i))
+
+        for okvir in self.players:
+            self.playersLayout.addWidget(okvir)
+        self.playersLayout.setAlignment(Qt.AlignCenter)
 
     def setbackground(self):
         tempImg = QPixmap('PNG/9c49087c09fd07a10ae3887a7825f389.jpg')
@@ -97,11 +104,11 @@ class InputPlayersView(QGraphicsView):
             self.infoLabel.setText('All players must have a unique name.')
             self.infoLabel.adjustSize()
         else:
+            self.boardgame = self.viewlist.widget(2)
+            self.boardgame.activateThreads()
             self.viewlist.setCurrentWidget(self.viewlist.widget(2))
 
     def backbuttonClick(self):
-        #remove created widget
-        self.viewlist.removeWidget(self.viewlist.widget(4))
         # back to input number of players
         self.viewlist.setCurrentWidget(self.viewlist.widget(3))
 

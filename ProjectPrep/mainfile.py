@@ -20,8 +20,9 @@ class MainWindow(QMainWindow):
         self.board = Boardgame(self.centralWidget)
         self.mainmenu = menuView(self.centralWidget)
         self.Settings = SettingsView(self.centralWidget)
-        #self.InputSettings = InputPlayersView(self.centralWidget, 0) # nema potrebe praviti ovde ovaj view
+        self.InputSettings = InputPlayersView(self.centralWidget) # nema potrebe praviti ovde ovaj view
         self.NumberOfPlayers = NumberOfPlayersView(self.centralWidget)
+        self.setGeometry(0, 0, 1000, 850)
 
         self.initUI()
         self.show()
@@ -32,8 +33,7 @@ class MainWindow(QMainWindow):
         self.centralWidget.addWidget(self.Settings) # 1. element view liste
         self.centralWidget.addWidget(self.board) # 2. element view liste
         self.centralWidget.addWidget(self.NumberOfPlayers) # 3. element view liste
-
-        #self.centralWidget.addWidget(self.InputSettings) # 4. element view liste, kreira se u numberOfPlayers.py
+        self.centralWidget.addWidget(self.InputSettings) # 4. element view liste, kreira se u numberOfPlayers.py
 
         self.centralWidget.setCurrentWidget(self.mainmenu)
         self.setWindowTitle('Crazy Cars')

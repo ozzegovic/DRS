@@ -23,7 +23,7 @@ class SettingsView(QGraphicsView):
     def initUI(self):
 
         self.grafickascena = QGraphicsScene()
-        self.grafickascena.setSceneRect(0, 0, 1200, 630)
+        self.grafickascena.setSceneRect(0, 0, 1000, 850)
 
         self.setbackground()
         self.backbtn = StyleButton('PNG/Buttons/Close_BTN.png', 'Back', 40, 40)
@@ -31,7 +31,6 @@ class SettingsView(QGraphicsView):
 
         self.grafickascena.addWidget(self.backbtn)
         self.backbtn.move(500, 500)
-
 
         self.setScene(self.grafickascena)
 

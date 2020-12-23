@@ -10,8 +10,10 @@ from ProjectPrep.CustomWidgets.CustomButton import StyleButton
 
 class Obstacle(QGraphicsPixmapItem):
 
-    def __init__(self, width, height):
+    def __init__(self, width):
         super().__init__()
+        self.width = width
+
         num = random.randint(1, 3)
         if num == 1:
             self.picture = QPixmap('PNG/Decor/Bush.png')
@@ -20,4 +22,16 @@ class Obstacle(QGraphicsPixmapItem):
         if num == 3:
             self.picture = QPixmap('PNG/Decor/Tree.png')
 
-        self.setPixmap(self.picture.scaled(width, height))
+        self.setPixmap(self.picture.scaledToWidth(width))
+
+    def setObstaclePix(self):
+
+        num = random.randint(1, 3)
+        if num == 1:
+            self.picture = QPixmap('PNG/Decor/Bush.png')
+        if num == 2:
+            self.picture = QPixmap('PNG/Decor/Rock.png')
+        if num == 3:
+            self.picture = QPixmap('PNG/Decor/Tree.png')
+
+        self.setPixmap(self.picture.scaledToWidth(self.width))
