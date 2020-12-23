@@ -18,7 +18,8 @@ class Boardgame(QGraphicsView):
 
         super(Boardgame, self).__init__()
         self.hud = HUD()
-        self.obstacles = [Obstacle(100), Obstacle(100)]
+        self.obstacles = [Obstacle(100), Obstacle(100),Obstacle(100), Obstacle(100)]
+        self.previous = 0
         self.viewlist = centralWidget
         self.backgroundItem = QGraphicsPixmapItem()
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
@@ -54,6 +55,16 @@ class Boardgame(QGraphicsView):
 
         self.grafickascena.addItem(self.obstacles[0])
         self.grafickascena.addItem(self.obstacles[1])
+        self.grafickascena.addItem(self.obstacles[2])
+        self.grafickascena.addItem(self.obstacles[3])
+        self.obstacles[0].setY(-200)
+        self.obstacles[0].setX(170)
+        self.obstacles[1].setY(-200)
+        self.obstacles[1].setX(500)
+        self.obstacles[2].setY(-600)
+        self.obstacles[2].setX(400)
+        self.obstacles[3].setY(-600)
+        self.obstacles[3].setX(720)
 
         self.grafickascena.addWidget(self.hud).setY(self.grafickascena.height() - self.hud.height())
 
@@ -87,20 +98,22 @@ class Boardgame(QGraphicsView):
     @pyqtSlot()
     def moveObstacle(self):
         for Ob in self.obstacles:
-            Ob.moveBy(0, 1)
-            if Ob.y() > self.grafickascena.height():
-
-                sansa = random.randint(0, 1) # simulacija coin toss-a. Ako je sansa 0 sakriti prepreku. Ako je jedan prikazati.
-                if sansa == 0:
-                    Ob.hide()
-                else:
+            Ob.moveBy(0, 2)
+            if Ob.y() > (self.grafickascena.height()-200):
                     self.createObstacle(Ob)
 
     def createObstacle(self, Ob : Obstacle):
 
-        Ob.show()
-        x = random.randint(0, self.grafickascena.width())
-
-        Ob.setY(-200)
+        x = random.randint(170, 720)
+        while (x>(self.previous-100)) & (x<(self.previous+100)):
+            x = random.randint(300, 700)
+        self.previous = x
+        Ob.setY(-150)
         Ob.setX(x)
         Ob.setObstaclePix()
+        Ob.hide()
+        sansa = random.randint(0, 100)  # simulacija coin toss-a. Ako je sansa 0 sakriti prepreku. Ako je jedan prikazati.
+        if sansa >60:
+            Ob.hide()
+        else:
+            Ob.show()
