@@ -6,9 +6,10 @@ import time
 
 class HUDOkvir(QGraphicsView):
 
-    def __init__(self, name):
+    def __init__(self, name, car):
         super().__init__()
         self.name = name
+        self.car = car
         self.initUI()
 
     def initUI(self):
@@ -25,8 +26,9 @@ class HUDOkvir(QGraphicsView):
         self.graphicsPixmapItem = QGraphicsPixmapItem(tempImg)
         self.grafickascena.addItem(self.graphicsPixmapItem)
 
+        self.path = 'PNG/Car_' + str(self.car) + '_Main_Positions/Car_' + str(self.car) + '_01'
         #slika na okviru za hud
-        img = QPixmap('PNG/Car_1_Main_Positions/Car_1_01.png')
+        img = QPixmap(self.path)
         img = img.scaled(100, 120)
         self.image = QGraphicsPixmapItem(img)
         self.image.moveBy(25, 30)

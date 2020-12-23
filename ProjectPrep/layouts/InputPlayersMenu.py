@@ -6,8 +6,6 @@ from ProjectPrep.CustomWidgets.InputOkvir import InputOkvir
 from ProjectPrep.CustomWidgets.CustomButton import StyleButton
 
 
-players = {}  # dictionary {"username" : carNumber}
-
 
 class InputPlayersView(QGraphicsView):
 
@@ -15,9 +13,12 @@ class InputPlayersView(QGraphicsView):
         super(InputPlayersView, self).__init__()
 
         self.viewlist = centralWidget
-        self.players = []  # array of inputOkvir, get inputs from previous view
-        global players
-        players = {}  # dictionary reset so that previously added players wouldn't be kept
+        self.playerFrames = []  # array of inputOkvir, get inputs from previous view
+
+        # dictionary {"username" : carNumber}
+        # dictionary needs to reset so that previously added players wouldn't be kept
+        self.players = {}
+
         self.infoLabel = QLabel()
         self.initUI()
 
@@ -59,15 +60,15 @@ class InputPlayersView(QGraphicsView):
 
     def initFrames(self, number):
 
-        for okvir in self.players:
+        for okvir in self.playerFrames:
             okvir.deleteLater()
 
-        self.players.clear()
+        self.playerFrames.clear()
 
         for i in range(number):
-            self.players.append(InputOkvir(i))
+            self.playerFrames.append(InputOkvir(i))
 
-        for okvir in self.players:
+        for okvir in self.playerFrames:
             self.playersLayout.addWidget(okvir)
         self.playersLayout.setAlignment(Qt.AlignCenter)
 
@@ -89,11 +90,10 @@ class InputPlayersView(QGraphicsView):
         self.validated = True
         # check added players
         # username must be unique and not empty
-        for i in range(len(self.players)):
-            if self.players[i].playerName != '':
-                global players
-                if players.get(self.players[i].playerName) == None:
-                    players[self.players[i].playerName] = self.players[i].Car
+        for i in range(len(self.playerFrames)):
+            if self.playerFrames[i].playerName != '':
+                if self.players.get(self.playerFrames[i].playerName) == None:
+                    self.players[self.playerFrames[i].playerName] = self.playerFrames[i].Car
                 else:
                     # key already exists
                     self.validated = False
@@ -105,10 +105,13 @@ class InputPlayersView(QGraphicsView):
             self.infoLabel.adjustSize()
         else:
             self.boardgame = self.viewlist.widget(2)
-            self.boardgame.activateThreads()
+            self.boardgame.restart()
+            self.boardgame.hud.initHudFrames(self.players)
             self.viewlist.setCurrentWidget(self.viewlist.widget(2))
 
     def backbuttonClick(self):
         # back to input number of players
         self.viewlist.setCurrentWidget(self.viewlist.widget(3))
 
+    def resetPlayers(self):
+        self.players = {}

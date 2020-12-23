@@ -41,11 +41,17 @@ class HUD(QGraphicsView):
         self.hbox.addWidget(self.label)
         self.scene.addWidget(self.label)
 
-        for i in range(4):
-            okvir = HUDOkvir('Player {}'.format(i))
-            self.players.append(okvir)
-            self.hbox.addWidget(okvir)
-
         self.setFrameShape(QFrame.NoFrame)
         self.setLayout(self.hbox)
         self.setScene(self.scene)
+
+    def initHudFrames(self, players):
+        for okvir in self.players:
+            okvir.deleteLater()
+
+        self.players.clear()
+
+        for player in players:
+            okvir = HUDOkvir(player, players[player])
+            self.players.append(okvir)
+            self.hbox.addWidget(okvir)
