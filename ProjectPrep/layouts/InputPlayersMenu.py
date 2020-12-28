@@ -58,11 +58,10 @@ class InputPlayersView(QGraphicsView):
         self.setLayout(self.holder)
         self.setScene(self.grafickascena)
 
+    # make a specific amount of input player frames
     def initFrames(self, number):
-
         for okvir in self.playerFrames:
             okvir.deleteLater()
-
         self.playerFrames.clear()
 
         for i in range(number):
@@ -105,9 +104,10 @@ class InputPlayersView(QGraphicsView):
             self.infoLabel.adjustSize()
         else:
             self.boardgame = self.viewlist.widget(2)
+            self.boardgame.initPlayers(self.players)
             self.boardgame.restart()
             self.boardgame.hud.initHudFrames(self.players)
-            self.viewlist.setCurrentWidget(self.viewlist.widget(2))
+            self.viewlist.setCurrentWidget(self.boardgame)
 
     def backbuttonClick(self):
         # back to input number of players

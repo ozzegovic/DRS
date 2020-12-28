@@ -48,6 +48,7 @@ class pauseView(QGraphicsView):
         self.boardgame = self.viewlist.widget(2)
         self.boardgame.pauseButton.setEnabled(True)
         self.boardgame.activateThreads()
+        self.boardgame.activatePlayerThreads(self.boardgame.players)
         self.hide()
     def replaybuttonclick(self):
         self.boardgame = self.viewlist.widget(2)
@@ -57,8 +58,11 @@ class pauseView(QGraphicsView):
 
     def mainmenubuttonclick(self):
         #self.viewlist.widget(2).grafickascena.removeItem(self.viewlist.widget(3).backgroundItem)
-        self.viewlist.widget(2).pauseButton.setEnabled(True)
-        self.viewlist.widget(2).worker.killThread = True
+        self.boardgame = self.viewlist.widget(2)
+        self.boardgame.pauseButton.setEnabled(True)
+        self.boardgame.worker.killThread = True
+        self.boardgame.collisionNotifier.killThread = True
+        self.boardgame.deletePlayers()
         self.hide()
         # remove added players from the dictionary
         self.inputPlayers = self.viewlist.widget(4)

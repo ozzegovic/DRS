@@ -12,6 +12,7 @@ from ProjectPrep.CustomWidgets.CustomButton import StyleButton
 from ProjectPrep.layouts.boardNotifier import Worker
 from ProjectPrep.layouts.pauseView import pauseView
 from ProjectPrep.CustomWidgets.Obstacle import Obstacle
+from ProjectPrep.CustomWidgets.collisionNotifier import CollisionNotifier
 
 class Boardgame(QGraphicsView):
 
@@ -20,19 +21,28 @@ class Boardgame(QGraphicsView):
         super(Boardgame, self).__init__()
         self.hud = HUD()
         self.obstacles = [Obstacle(100), Obstacle(100),Obstacle(100), Obstacle(100)]
-        self.previous = 0
+        self.previous = 0  #obstacle
         self.viewlist = centralWidget
         #self.backgroundItem = QGraphicsPixmapItem()
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.keybed1 = [Qt.Key_Right, Qt.Key_Down, Qt.Key_Up, Qt.Key_Left]
+        self.keybed2 = [Qt.Key_D, Qt.Key_S, Qt.Key_W, Qt.Key_A]
+        self.keybeds = [self.keybed1, self.keybed2]
         self.initUI()
+
+        self.players = []  # moving cars
 
         self.worker = Worker()
         self.worker.update.connect(self.movepicture)
         self.worker.update.connect(self.moveObstacle)
 
+        self.collisionNotifier = CollisionNotifier()
+        self.collisionNotifier.update.connect(self.checkCollision)
+
     def activateThreads(self):
-        self.worker.start() # resume option, no reseting obstacle position
+        self.worker.start() # resume option, not reseting obstacle position
+        self.collisionNotifier.start()
 
     def setStartPositions(self):
         self.obstacles[0].setY(-200)
@@ -46,7 +56,46 @@ class Boardgame(QGraphicsView):
 
     def restart(self):
         self.setStartPositions() # reset option, resets all the positions and starts the thread again
-        self.worker.start()
+        self.playerStartPositions(self.players)
+        self.playerStartLives(self.players)
+        self.activateThreads()
+        self.activatePlayerThreads(self.players)
+
+    def playerStartPositions(self, players):
+        self.widthPosition = 550 / (1 + len(players))
+        self.padding = 0
+        for i in range(len(players)):
+            self.players[i].setPos(150 + self.widthPosition + self.widthPosition * i + self.padding * i, 500)
+            self.padding = 50
+
+    def playerStartLives(self, players):
+        for player in players:
+            player.resetLives()
+
+    # key notifier threads
+    def activatePlayerThreads(self, players):
+        for player in players:
+            player.activateThreads()
+
+    # add players to the boardgame
+    def initPlayers(self, players):
+        self.players.clear()
+        self.i = 0
+        for player in players:
+            # players dicttionary: key(player) - playerName, value(players[player]) - playerCar
+            self.player = Player(player, ('PNG/Car_' + str(players[player]) + '_Main_Positions/Car_' + str(players[player]) + '_01'), self.keybeds[self.i])
+            self.players.append(self.player)
+            self.grafickascena.addItem(self.player)
+            self.i = + 1
+        self.playerStartPositions(self.players)
+
+    def deletePlayers(self):
+        for player in self.players:
+            player.key_notifier.isDone = True
+            self.collisionNotifier.killThread = True
+            self.grafickascena.removeItem(player)
+
+        self.players = []
 
     def initUI(self):
 
@@ -63,10 +112,6 @@ class Boardgame(QGraphicsView):
         self.grafickascena.addItem(self.mapContinue)
         self.graphicsPixmapItem.setY(-self.tempImg.height())
 
-        self.player = Player('PNG/Car_1_Main_Positions/Car_1_01.png')
-        self.player.moveBy(550, 400)
-
-        self.grafickascena.addItem(self.player)
         self.grafickascena.addItem(self.obstacles[0])
         self.grafickascena.addItem(self.obstacles[1])
         self.grafickascena.addItem(self.obstacles[2])
@@ -89,6 +134,7 @@ class Boardgame(QGraphicsView):
         self.worker.killThread = True
         self.pauseButton.worker.killThread = True
         self.pauseButton.setEnabled(False)
+        self.collisionNotifier.killThread = True
         self.grafickascena.addWidget(self.pauseview)
         self.pauseview.show()
         self.effect = QGraphicsBlurEffect()
@@ -126,8 +172,29 @@ class Boardgame(QGraphicsView):
         else:
             Ob.show()
 
-    def keyPressEvent(self, event):
-        self.player.keyPressEvent(event)
+    def keyPressEvent(self, event) -> None:
+        if event.key() in self.keybed1:
+            self.players[0].keyPressEvent(event)
 
-    def keyReleaseEvent(self, event):
-        self.player.keyReleaseEvent(event)
+        if len(self.players) == 2:
+            if event.key() in self.keybed2:
+                self.players[1].keyPressEvent(event)
+
+    def keyReleaseEvent(self, event) -> None:
+        if event.key() in self.keybed1:
+            self.players[0].keyReleaseEvent(event)
+
+        if len(self.players) == 2:
+            if event.key() in self.keybed2:
+                self.players[1].keyReleaseEvent(event)
+
+    @pyqtSlot()
+    def checkCollision(self):
+        for player in self.players:
+            if len(player.collidingItems()) != 0:
+                for item in player.collidingItems():
+                    if isinstance(item, Obstacle):
+                        self.died = player.die()
+                        if self.died == True:
+                            player.key_notifier.die()
+

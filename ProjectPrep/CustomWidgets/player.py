@@ -1,36 +1,45 @@
-from PyQt5.QtGui import QPixmap
-from PyQt5.QtWidgets import QGraphicsPixmapItem
+from PyQt5.QtGui import QPixmap, QColor
+from PyQt5.QtWidgets import QGraphicsPixmapItem, QGraphicsColorizeEffect
 from ProjectPrep.CustomWidgets.keyNotifier import KeyNotifier
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QTimer
 
 from ProjectPrep.layouts.boardNotifier import Worker
 from ProjectPrep.CustomWidgets.Obstacle import Obstacle
 
 class Player(QGraphicsPixmapItem):
-    def __init__(self, image):
-        self.qpix = QPixmap(image)
-        self.qpix = self.qpix.scaled(130, 100)
+    def __init__(self, playerName, playerCar , keybed):
+        self.playerName = playerName
+        self.qpix = QPixmap(playerCar)
+        self.qpix = self.qpix.scaled(100, 120)
+        self.keybed = keybed
         super(Player, self).__init__(self.qpix)
         self.lives = 3
 
+        self.effect = QGraphicsColorizeEffect()
+        self.effect.setColor(QColor(189, 189, 189))
+        self.effect.setStrength(0.5)
+        self.effect.setEnabled(False)
+        self.setGraphicsEffect(self.effect)
+
         self.key_notifier = KeyNotifier()
         self.key_notifier.key_signal.connect(self.movePlayer)
-        self.key_notifier.start()
 
-        self.worker = Worker()
-        self.worker.update.connect(self.checkCollision)
-        self.worker.start()
+        self.safeTimer = QTimer()
+        self.safeTimer.timeout.connect(self.makeKillable)
+        self.killable = True
 
 
     def die(self):
-        self.lives = self.lives - 1
-        print("ostalo jos {} zivota".format(self.lives))
-        if self.lives == 0:
-            self.key_notifier.die()
-            self.worker.killThread = True
-            return True
-        else:
-            return False
+        if self.killable == True:
+            self.lives = self.lives - 1
+            print("Player: {}, Lives: {}".format(self.playerName, self.lives))
+            if self.lives == 0:
+                self.key_notifier.die()
+                self.killable = False  # died three times already, no need to count lives anymore
+                return True
+            else:
+                self.makeUnkillable()
+                return False
 
     def keyPressEvent(self, event):
         self.key_notifier.add_key(event.key())
@@ -39,18 +48,31 @@ class Player(QGraphicsPixmapItem):
         self.key_notifier.rem_key(event.key())
 
     def movePlayer(self, key):
-        print(key)
-        if key == Qt.Key_Down:
-            self.moveBy(0, 15)
-        elif key == Qt.Key_Right:
-            self.moveBy(15, 0)
-        elif key == Qt.Key_Up:
-            self.moveBy(0, -15)
-        elif key == Qt.Key_Left:
-            self.moveBy(-15, 0)
+        # if it's not killable, means player died and cannot move
+        if self.killable == True:
+            if key == self.keybed[0]:
+                self.moveBy(10, 0)
+            elif key == self.keybed[1]:
+                self.moveBy(0, 10)
+            elif key == self.keybed[2]:
+                self.moveBy(0, -10)
+            elif key == self.keybed[3]:
+                self.moveBy(-10, 0)
 
-    def checkCollision(self):
-        if len(self.collidingItems()) != 0:
-            for item in self.collidingItems():
-                if isinstance(item, Obstacle):
-                    self.die()
+    def resetLives(self):
+        self.lives = 3
+        self.key_notifier.is_done = False
+
+    def activateThreads(self):
+        self.key_notifier.start()
+
+    def makeUnkillable(self):
+        self.killable = False
+        self.safeTimer.start(5000)  # After 5 seconds, calls makeKillable.
+        self.effect.setEnabled(True)
+
+    def makeKillable(self):
+        self.effect.setEnabled(False)
+        self.killable = True
+        self.safeTimer.stop()
+
