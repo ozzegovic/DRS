@@ -38,7 +38,7 @@ class Boardgame(QGraphicsView):
         self.cntSecs = 0
         self.timer = QtCore.QTimer(self)
         self.timer.timeout.connect(self.speedUp)
-
+        self.pauseTimer = False
 
         self.players = []  # moving cars
 
@@ -52,6 +52,7 @@ class Boardgame(QGraphicsView):
 
     def startTimer(self):
         self.timer.start(1000)
+        self.pauseTimer = False
 
     def activateThreads(self):
         self.worker.start() # resume option, not reseting obstacle position
@@ -152,8 +153,12 @@ class Boardgame(QGraphicsView):
         self.pauseview.show()
         self.effect = QGraphicsBlurEffect()
         self.setGraphicsEffect(self.effect)
+        self.pauseTimer = True
 
     def speedUp(self):
+        if self.pauseTimer:
+            return
+        print("proslo {} sekudni, level {}".format(self.cntSecs, self.level))
         self.cntSecs += 1
         if self.cntSecs == 20:
             self.level = self.level + 1

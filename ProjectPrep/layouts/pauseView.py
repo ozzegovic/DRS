@@ -49,6 +49,7 @@ class pauseView(QGraphicsView):
         self.boardgame.pauseButton.setEnabled(True)
         self.boardgame.activateThreads()
         self.boardgame.activatePlayerThreads(self.boardgame.players)
+        self.boardgame.startTimer()
         self.hide()
     def replaybuttonclick(self):
         self.boardgame = self.viewlist.widget(2)
