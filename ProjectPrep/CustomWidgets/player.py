@@ -36,10 +36,8 @@ class Player(QGraphicsPixmapItem):
             if self.lives == 0:
                 self.key_notifier.die()
                 self.killable = False  # died three times already, no need to count lives anymore
-                return True
             else:
                 self.makeUnkillable() # calls timer
-                return False
 
     def keyPressEvent(self, event):
         self.key_notifier.add_key(event.key())

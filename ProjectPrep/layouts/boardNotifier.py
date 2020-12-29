@@ -9,7 +9,7 @@ class Worker(QObject):
     finished = pyqtSignal()
     update = pyqtSignal()
 
-    def __init__(self):
+    def __init__(self, calldynamic):
         super().__init__()
         self.thread = QThread()
         self.killThread = False
@@ -20,11 +20,20 @@ class Worker(QObject):
         self.finished.connect(self.thread.quit)
         # Connect Thread started signal to Worker operational slot method
         self.thread.started.connect(self.work)
+        self.perioda = calldynamic
 
     def start(self):
         # Start the thread
         self.killThread = False
         self.thread.start()
+
+    def stop(self):
+        self.killThread = True
+
+    def decreaseperiod(self, decrement):
+
+        self.perioda = self.perioda - decrement
+        print('Perioda je: {0}.'.format(self.perioda))
 
     @pyqtSlot()
     def work(self):  # A slot with no params
@@ -35,7 +44,7 @@ class Worker(QObject):
                 return
 
             self.update.emit()
-            time.sleep(0.01)
+            time.sleep(self.perioda)
 
         # notify all
         # in this case: kill the thread

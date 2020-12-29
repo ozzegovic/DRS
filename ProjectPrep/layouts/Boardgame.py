@@ -42,21 +42,24 @@ class Boardgame(QGraphicsView):
 
         self.players = []  # moving cars
 
-        self.worker = Worker()
+        self.worker = Worker(0.01)
         self.worker.update.connect(self.movepicture)
         self.worker.update.connect(self.moveObstacle)
 
-        self.collisionNotifier = CollisionNotifier()
+        self.collisionNotifier = Worker(0.01)
         self.collisionNotifier.update.connect(self.checkCollision)
 
-
-    def startTimer(self):
-        self.timer.start(1000)
-        self.pauseTimer = False
 
     def activateThreads(self):
         self.worker.start() # resume option, not reseting obstacle position
         self.collisionNotifier.start()
+        self.timer.start(20000) # svakih 20 sekundi ce se pozivati self.speedUp, nije potrebna counter promenljiva.
+
+    def stopThreads(self):
+        self.worker.stop()
+        self.obstaclemove.stop()
+        self.collisionNotifier.stop()
+        self.timer.stop()
 
     def setStartPositions(self):
         self.obstacles[0].setY(-200)
@@ -86,7 +89,7 @@ class Boardgame(QGraphicsView):
         for player in players:
             player.resetLives()
 
-    # key notifier threads
+    # key notifier threads # question
     def activatePlayerThreads(self, players):
         for player in players:
             player.activateThreads()
@@ -145,25 +148,16 @@ class Boardgame(QGraphicsView):
     def pauseButtonClick(self):
         self.pauseview = pauseView(self.viewlist, self.grafickascena.width() / 4, self.grafickascena.height() / 4)
         self.pauseview.move(self.grafickascena.width() / 3, self.grafickascena.height() / 3)
-        self.worker.killThread = True
         self.pauseButton.worker.killThread = True
         self.pauseButton.setEnabled(False)
-        self.collisionNotifier.killThread = True
         self.grafickascena.addWidget(self.pauseview)
         self.pauseview.show()
-        self.effect = QGraphicsBlurEffect()
-        self.setGraphicsEffect(self.effect)
-        self.pauseTimer = True
+        self.stopThreads()
 
+    @pyqtSlot()
     def speedUp(self):
-        if self.pauseTimer:
-            return
-        self.cntSecs += 1
-        if self.cntSecs == 20:
-            self.level = self.level + 1
-            self.cntSecs = 0
-            self.hud.updateHUD()
-
+        self.hud.updateHUD()
+        self.worker.decreaseperiod(0.001)
 
     @pyqtSlot()
     def movepicture(self):
@@ -191,7 +185,6 @@ class Boardgame(QGraphicsView):
         Ob.setY(-150)
         Ob.setX(x)
         Ob.setObstaclePix()
-        Ob.hide()
         sansa = random.randint(0, 100)  # simulacija coin toss-a. Ako je sansa 0 sakriti prepreku. Ako je jedan prikazati.
         #prvih nekoliko prepreka se pojavljuje na pocetku nezavisno od sanse?
 
@@ -228,9 +221,8 @@ class Boardgame(QGraphicsView):
             if len(player.collidingItems()) != 0:
                 for item in player.collidingItems():
                     if isinstance(item, Obstacle):
-                        player.die()
-                        if player.killable == False:
-                            player.key_notifier.die()
+                        if player.killable == True:
+                            player.die()
                             self.setPlayerPosition(player)
 
     # position the player on the original starting position
