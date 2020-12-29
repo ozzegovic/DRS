@@ -158,7 +158,6 @@ class Boardgame(QGraphicsView):
     def speedUp(self):
         if self.pauseTimer:
             return
-        print("proslo {} sekudni, level {}".format(self.cntSecs, self.level))
         self.cntSecs += 1
         if self.cntSecs == 20:
             self.level = self.level + 1
