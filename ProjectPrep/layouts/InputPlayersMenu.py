@@ -104,6 +104,7 @@ class InputPlayersView(QGraphicsView):
             self.infoLabel.adjustSize()
         else:
             self.boardgame = self.viewlist.widget(2)
+            self.boardgame.startTimer()
             self.boardgame.initPlayers(self.players)
             self.boardgame.restart()
             self.boardgame.hud.initHudFrames(self.players)

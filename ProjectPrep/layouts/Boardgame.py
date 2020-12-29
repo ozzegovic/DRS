@@ -3,6 +3,8 @@ from PyQt5.QtWidgets import QApplication, QGraphicsView, QGraphicsScene, QVBoxLa
 from PyQt5.QtWidgets import QGraphicsPixmapItem, QStackedWidget, QGraphicsBlurEffect, QGraphicsOpacityEffect
 from PyQt5.QtCore import Qt, pyqtSlot, QPoint
 from PyQt5.QtGui import QPixmap, QPainter
+from PyQt5 import QtCore
+
 from ProjectPrep.CustomWidgets.ButtonNotifier import Worker
 from ProjectPrep.CustomWidgets.HUD import HUD
 from ProjectPrep.CustomWidgets.player import Player
@@ -31,6 +33,13 @@ class Boardgame(QGraphicsView):
         self.keybeds = [self.keybed1, self.keybed2]
         self.initUI()
 
+        #timer
+        self.level = 1
+        self.cntSecs = 0
+        self.timer = QtCore.QTimer(self)
+        self.timer.timeout.connect(self.speedUp)
+
+
         self.players = []  # moving cars
 
         self.worker = Worker()
@@ -39,6 +48,10 @@ class Boardgame(QGraphicsView):
 
         self.collisionNotifier = CollisionNotifier()
         self.collisionNotifier.update.connect(self.checkCollision)
+
+
+    def startTimer(self):
+        self.timer.start(1000)
 
     def activateThreads(self):
         self.worker.start() # resume option, not reseting obstacle position
@@ -140,19 +153,28 @@ class Boardgame(QGraphicsView):
         self.effect = QGraphicsBlurEffect()
         self.setGraphicsEffect(self.effect)
 
+    def speedUp(self):
+        self.cntSecs += 1
+        if self.cntSecs == 20:
+            self.level = self.level + 1
+            self.cntSecs = 0
+            self.hud.updateHUD()
+
+
     @pyqtSlot()
     def movepicture(self):
-        self.graphicsPixmapItem.moveBy(0, 2)
+        self.graphicsPixmapItem.moveBy(0, self.level*0.7*2+1)
         res1 = self.graphicsPixmapItem.y() % self.tempImg.height()
         self.mapContinue.setY(res1)
 
-        if self.graphicsPixmapItem.y() == 0:
+        if self.graphicsPixmapItem.y() >= 0:
             self.graphicsPixmapItem.setY(-self.tempImg.height())
 
     @pyqtSlot()
     def moveObstacle(self):
+
         for Ob in self.obstacles:
-            Ob.moveBy(0, 2)
+            Ob.moveBy(0, self.level*0.7*2+1)
             if Ob.y() > (self.grafickascena.height()-200):
                     self.createObstacle(Ob)
 
@@ -167,10 +189,18 @@ class Boardgame(QGraphicsView):
         Ob.setObstaclePix()
         Ob.hide()
         sansa = random.randint(0, 100)  # simulacija coin toss-a. Ako je sansa 0 sakriti prepreku. Ako je jedan prikazati.
-        if sansa >60:
-            Ob.hide()
+        #prvih nekoliko prepreka se pojavljuje na pocetku nezavisno od sanse?
+
+        if self.level < 7:
+            if sansa > self.level*10:
+                Ob.hide()
+            else:
+                Ob.show()
         else:
-            Ob.show()
+            if sansa > 70:
+                Ob.hide()
+            else:
+                Ob.show()
 
     def keyPressEvent(self, event) -> None:
         if event.key() in self.keybed1:

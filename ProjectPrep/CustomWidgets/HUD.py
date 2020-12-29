@@ -10,7 +10,8 @@ class HUD(QGraphicsView):
     def __init__(self):
         super(HUD, self).__init__()
         self.scene = QGraphicsScene()
-        self.label = QLabel('Level\n\n3')
+        self.level = 1
+        self.label = QLabel('Level\n\n{}'.format(self.level))
         self.label.setFixedWidth(300)
         self.label.setFont(QFont('Ariel', 25))
         self.label.setAlignment(Qt.AlignCenter)
@@ -45,6 +46,9 @@ class HUD(QGraphicsView):
         self.setLayout(self.hbox)
         self.setScene(self.scene)
 
+    def updateHUD(self):
+        self.level += 1
+        self.label.setText("Level\n\n{}".format(self.level))
     def initHudFrames(self, players):
         for okvir in self.players:
             okvir.deleteLater()
