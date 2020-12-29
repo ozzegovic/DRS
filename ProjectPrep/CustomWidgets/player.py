@@ -38,7 +38,7 @@ class Player(QGraphicsPixmapItem):
                 self.killable = False  # died three times already, no need to count lives anymore
                 return True
             else:
-                self.makeUnkillable()
+                self.makeUnkillable() # calls timer
                 return False
 
     def keyPressEvent(self, event):
@@ -49,19 +49,26 @@ class Player(QGraphicsPixmapItem):
 
     def movePlayer(self, key):
         # if it's not killable, means player died and cannot move
+        print(self.pos().y())
         if self.killable == True:
             if key == self.keybed[0]:
-                self.moveBy(10, 0)
+                if self.pos().x() + 10 <= 750:
+                    self.moveBy(10, 0)
             elif key == self.keybed[1]:
-                self.moveBy(0, 10)
+                if self.pos().y() + 10 <= 500:
+                    self.moveBy(0, 10)
             elif key == self.keybed[2]:
-                self.moveBy(0, -10)
+                if self.pos().y() + 10 >= 20:
+                    self.moveBy(0, -10)
             elif key == self.keybed[3]:
-                self.moveBy(-10, 0)
+                if self.pos().x() + 10 >= 180:
+                    self.moveBy(-10, 0)
 
     def resetLives(self):
         self.lives = 3
         self.key_notifier.is_done = False
+        self.effect.setEnabled(False)
+        self.killable = True
 
     def activateThreads(self):
         self.key_notifier.start()
@@ -73,6 +80,6 @@ class Player(QGraphicsPixmapItem):
 
     def makeKillable(self):
         self.effect.setEnabled(False)
-        self.killable = True
         self.safeTimer.stop()
+        self.killable = True
 
