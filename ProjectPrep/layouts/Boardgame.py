@@ -176,7 +176,7 @@ class Boardgame(QGraphicsView):
         if event.key() in self.keybed1:
             self.players[0].keyPressEvent(event)
 
-        if len(self.players) == 2:
+        if len(self.players) >= 2:
             if event.key() in self.keybed2:
                 self.players[1].keyPressEvent(event)
 
@@ -184,7 +184,7 @@ class Boardgame(QGraphicsView):
         if event.key() in self.keybed1:
             self.players[0].keyReleaseEvent(event)
 
-        if len(self.players) == 2:
+        if len(self.players) >= 2:
             if event.key() in self.keybed2:
                 self.players[1].keyReleaseEvent(event)
 
@@ -194,7 +194,15 @@ class Boardgame(QGraphicsView):
             if len(player.collidingItems()) != 0:
                 for item in player.collidingItems():
                     if isinstance(item, Obstacle):
-                        self.died = player.die()
-                        if self.died == True:
+                        player.die()
+                        if player.killable == False:
                             player.key_notifier.die()
+                            self.setPlayerPosition(player)
 
+    # position the player on the original starting position
+    def setPlayerPosition(self, player):
+        self.widthPosition = 550 / (1 + len(self.players))
+        self.padding = 50
+        for i in range(len(self.players)):
+            if player == self.players[i]:
+                self.players[i].setPos(150 + self.widthPosition + self.widthPosition * i + self.padding * i, 500)

@@ -49,7 +49,6 @@ class Player(QGraphicsPixmapItem):
 
     def movePlayer(self, key):
         # if it's not killable, means player died and cannot move
-        print(self.pos().y())
         if self.killable == True:
             if key == self.keybed[0]:
                 if self.pos().x() + 10 <= 750:
@@ -82,4 +81,6 @@ class Player(QGraphicsPixmapItem):
         self.effect.setEnabled(False)
         self.safeTimer.stop()
         self.killable = True
+        self.key_notifier.start()
+
 

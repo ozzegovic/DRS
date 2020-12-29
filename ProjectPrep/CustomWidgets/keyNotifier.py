@@ -24,6 +24,7 @@ class KeyNotifier(QObject):
         """
         Start notifications.
         """
+        self.is_done = False
         self.thread.start()
 
     def add_key(self, key):
