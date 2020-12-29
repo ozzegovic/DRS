@@ -44,7 +44,7 @@ class Boardgame(QGraphicsView):
 
         self.worker = Worker(0.01)
         self.worker.update.connect(self.movepicture)
-        self.worker.update.connect(self.moveObstacle)
+        #self.worker.update.connect(self.moveObstacle)
 
         self.collisionNotifier = Worker(0.01)
         self.collisionNotifier.update.connect(self.checkCollision)
@@ -57,7 +57,6 @@ class Boardgame(QGraphicsView):
 
     def stopThreads(self):
         self.worker.stop()
-        self.obstaclemove.stop()
         self.collisionNotifier.stop()
         self.timer.stop()
 
@@ -100,7 +99,7 @@ class Boardgame(QGraphicsView):
         self.i = 0
         for player in players:
             # players dicttionary: key(player) - playerName, value(players[player]) - playerCar
-            self.player = Player(player, ('PNG/Car_' + str(players[player]) + '_Main_Positions/Car_' + str(players[player]) + '_01'), self.keybeds[self.i])
+            self.player = Player(player, ('PNG/Car_' + str(players[player]) + '_Main_Positions/Car_' + str(players[player]) + '_01'), self.keybeds[self.i], self.grafickascena.width() / 15)
             self.players.append(self.player)
             self.grafickascena.addItem(self.player)
             self.i = + 1
@@ -154,7 +153,6 @@ class Boardgame(QGraphicsView):
         self.pauseview.show()
         self.stopThreads()
 
-    @pyqtSlot()
     def speedUp(self):
         self.hud.updateHUD()
         self.worker.decreaseperiod(0.001)

@@ -7,10 +7,10 @@ from ProjectPrep.layouts.boardNotifier import Worker
 from ProjectPrep.CustomWidgets.Obstacle import Obstacle
 
 class Player(QGraphicsPixmapItem):
-    def __init__(self, playerName, playerCar , keybed):
+    def __init__(self, playerName, playerCar , keybed, width):
         self.playerName = playerName
         self.qpix = QPixmap(playerCar)
-        self.qpix = self.qpix.scaled(100, 120)
+        self.qpix = self.qpix.scaled(width, width * 1.5)
         self.keybed = keybed
         super(Player, self).__init__(self.qpix)
         self.lives = 3
@@ -27,6 +27,7 @@ class Player(QGraphicsPixmapItem):
         self.safeTimer = QTimer()
         self.safeTimer.timeout.connect(self.makeKillable)
         self.killable = True
+        self.touchesplayer = False
 
 
     def die(self):
@@ -49,17 +50,47 @@ class Player(QGraphicsPixmapItem):
         # if it's not killable, means player died and cannot move
         if self.killable == True:
             if key == self.keybed[0]:
-                if self.pos().x() + 10 <= 750:
-                    self.moveBy(10, 0)
+                if self.pos().x() + 15 <= 750:
+                    self.moveBy(15, 0)
+                    self.checkifCollision(key)
             elif key == self.keybed[1]:
-                if self.pos().y() + 10 <= 500:
-                    self.moveBy(0, 10)
+                if self.pos().y() + 15 <= 500:
+                    self.moveBy(0, 15)
+                    self.checkifCollision(key)
             elif key == self.keybed[2]:
-                if self.pos().y() + 10 >= 20:
-                    self.moveBy(0, -10)
+                if self.pos().y() + 15 >= 20:
+                    self.moveBy(0, -15)
+                    self.checkifCollision(key)
             elif key == self.keybed[3]:
-                if self.pos().x() + 10 >= 180:
-                    self.moveBy(-10, 0)
+                if self.pos().x() + 15 >= 180:
+                    self.moveBy(-15, 0)
+                    self.checkifCollision(key)
+
+    def checkifCollision(self, key):
+
+        touchedplayer = self.doesitTouch()
+        if self.touchesplayer:
+            if key == self.keybed[0]:
+                self.moveBy(-15, 0)
+                touchedplayer.moveBy(30, 0)
+            elif key == self.keybed[1]:
+                self.moveBy(0, -15)
+                touchedplayer.moveBy(0, 30)
+            elif key == self.keybed[2]:
+                self.moveBy(0, 15)
+                touchedplayer.moveBy(0, -30)
+            elif key == self.keybed[3]:
+                self.moveBy(15, 0)
+                touchedplayer.moveBy(-30, 0)
+
+    def doesitTouch(self):
+
+        collidingPlayers = list(filter(lambda x: isinstance(x, Player), self.collidingItems()))
+        if len(collidingPlayers) != 0:
+            self.touchesplayer = True
+            return collidingPlayers[0]
+        else:
+            self.touchesplayer = False
 
     def resetLives(self):
         self.lives = 3
