@@ -27,8 +27,13 @@ class Player(QGraphicsPixmapItem):
         self.safeTimer = QTimer()
         self.safeTimer.timeout.connect(self.makeKillable)
         self.killable = True
+        self.safeTimerRemaining = 0
         self.touchesplayer = False
 
+        self.notMoving = QTimer()
+        self.notMoving.timeout.connect(self.enableMoving)
+        self.canMove = True
+        self.notMovingRemaining = 0
 
     def die(self):
         if self.killable == True:
@@ -50,19 +55,19 @@ class Player(QGraphicsPixmapItem):
         # if it's not killable, means player died and cannot move
         if self.killable == True:
             if key == self.keybed[0]:
-                if self.pos().x() + 15 <= 750:
+                if self.pos().x() + 15 <= 790:
                     self.moveBy(15, 0)
                     self.checkifCollision(key)
             elif key == self.keybed[1]:
-                if self.pos().y() + 15 <= 500:
+                if self.pos().y() + 15 <= 530:
                     self.moveBy(0, 15)
                     self.checkifCollision(key)
             elif key == self.keybed[2]:
-                if self.pos().y() + 15 >= 20:
+                if self.pos().y() - 15 >= 0:
                     self.moveBy(0, -15)
                     self.checkifCollision(key)
             elif key == self.keybed[3]:
-                if self.pos().x() + 15 >= 180:
+                if self.pos().x() - 15 >= 150:
                     self.moveBy(-15, 0)
                     self.checkifCollision(key)
 
@@ -72,16 +77,20 @@ class Player(QGraphicsPixmapItem):
         if self.touchesplayer:
             if key == self.keybed[0]:
                 self.moveBy(-15, 0)
-                touchedplayer.moveBy(30, 0)
+                if touchedplayer.pos().x() + 30 <= 790:
+                    touchedplayer.moveBy(30, 0)
             elif key == self.keybed[1]:
                 self.moveBy(0, -15)
-                touchedplayer.moveBy(0, 30)
+                if touchedplayer.pos().y() + 30 <= 530:
+                    touchedplayer.moveBy(0, 30)
             elif key == self.keybed[2]:
                 self.moveBy(0, 15)
-                touchedplayer.moveBy(0, -30)
+                if touchedplayer.pos().y() - 30 >= 0:
+                    touchedplayer.moveBy(0, -30)
             elif key == self.keybed[3]:
                 self.moveBy(15, 0)
-                touchedplayer.moveBy(-30, 0)
+                if touchedplayer.pos().x() - 30 >= 150:
+                    touchedplayer.moveBy(-30, 0)
 
     def doesitTouch(self):
 
@@ -94,12 +103,32 @@ class Player(QGraphicsPixmapItem):
 
     def resetLives(self):
         self.lives = 3
-        self.key_notifier.is_done = False
         self.effect.setEnabled(False)
         self.killable = True
+        self.canMove = True
+        self.safeTimerRemaining = 0
+        self.notMovingRemaining = 0
 
     def activateThreads(self):
-        self.key_notifier.start()
+        if self.safeTimerRemaining != 0:
+            self.safeTimer.start(self.safeTimerRemaining)   # resuming timers
+            self.safeTimerRemaining = 0
+        if self.notMovingRemaining != 0:
+            self.notMoving.start(self.notMovingRemaining)
+            self.notMoving = 0
+        if self.killable and self.canMove:
+            self.key_notifier.start()
+
+    def stopThread(self):
+        if self.safeTimer.isActive():
+            self.safeTimerRemaining = self.safeTimer.remainingTime()    #pausing timers
+            self.safeTimer.stop()
+
+        if self.notMoving.isActive():
+            self.notMovingRemaining = self.notMoving.remainingTime()
+            self.notMoving.stop()
+
+        self.key_notifier.die()
 
     def makeUnkillable(self):
         self.killable = False
@@ -112,4 +141,19 @@ class Player(QGraphicsPixmapItem):
         self.killable = True
         self.key_notifier.start()
 
+    def addLife(self):
+        self.lives += 1
+        print("Player: {}, Lives: {}".format(self.playerName, self.lives))
+
+    def disableMoving(self):
+        self.key_notifier.die()
+        self.canMove = False
+        self.notMoving.start(2000)
+
+    def enableMoving(self):
+        self.notMoving.stop()
+        self.canMove = True
+        if self.killable:
+            self.key_notifier.start()   # if didn't lose a life while unable to move, enable moving
+                                        # if died while unable to move, makeKillable will enable moving after the safe timer expires
 
