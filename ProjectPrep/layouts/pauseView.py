@@ -58,7 +58,6 @@ class pauseView(QGraphicsView):
     def mainmenubuttonclick(self):
         self.boardgame = self.viewlist.widget(2)
         self.boardgame.pauseButton.setEnabled(True)
-        self.boardgame.stopThreads()
         self.boardgame.deletePlayers()
         self.hide()
         # remove added players from the dictionary

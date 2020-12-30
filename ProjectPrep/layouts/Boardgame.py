@@ -110,12 +110,12 @@ class Boardgame(QGraphicsView):
             self.i = + 1
         self.playerStartPositions(self.players)
 
+    # remove each car from the graphics scene, stop all threads, delete players list
     def deletePlayers(self):
         for player in self.players:
-            player.key_notifier.isDone = True
-            self.collisionNotifier.killThread = True
             self.grafickascena.removeItem(player)
 
+        self.stopThreads()
         self.players = []
 
     def initUI(self):
@@ -225,8 +225,14 @@ class Boardgame(QGraphicsView):
                 for item in player.collidingItems():
                     if isinstance(item, Obstacle):
                         if player.killable == True:
-                            player.die()
-                            self.setPlayerPosition(player)
+                            if item.id == 0:
+                                player.die()
+                                self.setPlayerPosition(player)
+                            elif item.id == 1:
+                                player.disableMoving()
+                            elif item.id == 2:
+                                item.hide()  # if not hidden it would add lives as long as the car is still colliding with it, other players could get it as well
+                                player.addLife()
 
     # position the player on the original starting position
     def setPlayerPosition(self, player):

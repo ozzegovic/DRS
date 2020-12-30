@@ -17,10 +17,13 @@ class Obstacle(QGraphicsPixmapItem):
         num = random.randint(1, 3)
         if num == 1:
             self.picture = QPixmap('PNG/Decor/Bush.png')
+            self.id = 0
         if num == 2:
             self.picture = QPixmap('PNG/Decor/Rock.png')
+            self.id = 0
         if num == 3:
             self.picture = QPixmap('PNG/Decor/Tree.png')
+            self.id = 0
 
         self.setPixmap(self.picture.scaledToWidth(width))
 
@@ -29,18 +32,25 @@ class Obstacle(QGraphicsPixmapItem):
         num = random.randint(1, 7)
         if num == 1:
             self.picture = QPixmap('PNG/Decor/Bush.png')
+            self.id = 0
         if num == 2:
             self.picture = QPixmap('PNG/Decor/Rock.png')
+            self.id = 0
         if num == 3:
             self.picture = QPixmap('PNG/Decor/Tree.png')
+            self.id = 0
         if num == 4:
             self.picture = QPixmap('PNG/Game_Props_Items/Barrel_01.png')
+            self.id = 0
         if num == 5:
             self.picture = QPixmap('PNG/Game_Props_Items/Jumping_Pad_02.png')
+            self.id = 0
         if num == 6:
             self.picture = QPixmap('PNG/Game_Props_Items/Oil.png')
+            self.id = 1
         if num == 7:
             self.picture = QPixmap('PNG/Game_Bonus_Items/HP_Bonus.png')
+            self.id = 2
 
         self.setPixmap(self.picture.scaledToWidth(self.width))
 

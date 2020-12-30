@@ -29,6 +29,8 @@ class Player(QGraphicsPixmapItem):
         self.killable = True
         self.touchesplayer = False
 
+        self.notMoving = QTimer()
+        self.notMoving.timeout.connect(self.enableMoving)
 
     def die(self):
         if self.killable == True:
@@ -117,5 +119,19 @@ class Player(QGraphicsPixmapItem):
         self.safeTimer.stop()
         self.killable = True
         self.key_notifier.start()
+
+    def addLife(self):
+        self.lives += 1
+        print(self.lives)
+
+    def disableMoving(self):
+        self.key_notifier.die()
+        self.notMoving.start(2000)
+
+    def enableMoving(self):
+        self.notMoving.stop()
+        if self.killable:
+            self.key_notifier.start()   # if didn't lose a life while unable to move, enable moving
+                                        # if died while unable to move, makeKillable will enable moving after the safe timer expires
 
 
