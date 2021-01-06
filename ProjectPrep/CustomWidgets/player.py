@@ -41,6 +41,7 @@ class Player(QGraphicsPixmapItem):
             print("Player: {}, Lives: {}".format(self.playerName, self.lives))
             if self.lives == 0:
                 self.key_notifier.die()
+                self.hide()
                 self.killable = False  # died three times already, no need to count lives anymore
             else:
                 self.makeUnkillable() # calls timer

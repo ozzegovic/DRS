@@ -46,9 +46,20 @@ class HUD(QGraphicsView):
         self.setLayout(self.hbox)
         self.setScene(self.scene)
 
-    def updateHUD(self):
-        self.level += 1
+    def restart(self):
+        self.label.setStyleSheet('color: white; font-weight: bold; background: transparent;')
+        self.level = 1
         self.label.setText("Level\n\n{}".format(self.level))
+
+    def updateHUD(self):
+        if self.level < 10:
+            self.level += 1
+
+        if self.level == 10:
+            self.label.setStyleSheet('color: red; font-weight: bold; background: transparent;')
+
+        self.label.setText("Level\n\n{}".format(self.level))
+
     def initHudFrames(self, players):
         for okvir in self.players:
             okvir.deleteLater()

@@ -12,6 +12,7 @@ class Worker(QObject):
     def __init__(self, calldynamic):
         super().__init__()
         self.thread = QThread()
+        self.startdynamic = calldynamic
         self.killThread = False
         # move the Worker object to the Thread object
         # "push" self from the current thread to this thread
@@ -30,10 +31,13 @@ class Worker(QObject):
     def stop(self):
         self.killThread = True
 
-    def decreaseperiod(self, decrement):
-
-        self.perioda = self.perioda - decrement
+    def decreaseperiod(self, period):
+        if self.perioda - period > 0:
+            self.perioda = self.perioda - period
         print('Perioda je: {0}.'.format(self.perioda))
+
+    def restart(self):
+        self.perioda = self.startdynamic
 
     @pyqtSlot()
     def work(self):  # A slot with no params

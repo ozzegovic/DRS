@@ -54,7 +54,7 @@ class Boardgame(QGraphicsView):
         self.worker.start() # resume option, not reseting obstacle position
         self.collisionNotifier.start()
         self.activatePlayerThreads()  # for each player start key notifier thread
-        self.timer.start(20000) # svakih 20 sekundi ce se pozivati self.speedUp, nije potrebna counter promenljiva.
+        self.timer.start(4000)
 
     def stopThreads(self):
         self.worker.stop()
@@ -76,6 +76,8 @@ class Boardgame(QGraphicsView):
         self.setStartPositions() # reset option, resets all the positions and starts the thread again
         self.playerStartPositions(self.players)
         self.playerStartLives(self.players)
+        self.worker.restart()
+        self.hud.restart()
         self.activateThreads()
 
     def playerStartPositions(self, players):
