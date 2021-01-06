@@ -53,7 +53,7 @@ class menuView(QGraphicsView):
 
     def gotoSettingsMenu(self):
 
-        self.viewlist.setCurrentWidget(self.viewlist.widget(1))
+        self.viewlist.setCurrentWidget(self.viewlist.widget(5))
 
     def closeThis(self):
         sys.exit()

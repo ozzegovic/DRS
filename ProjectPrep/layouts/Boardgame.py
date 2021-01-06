@@ -227,6 +227,7 @@ class Boardgame(QGraphicsView):
                         if player.killable == True:
                             if item.id == 0:
                                 player.die()
+                                self.checkAlivePlayers()
                                 self.setPlayerPosition(player)
                             elif item.id == 1:
                                 player.disableMoving()
@@ -241,3 +242,13 @@ class Boardgame(QGraphicsView):
         for i in range(len(self.players)):
             if player == self.players[i]:
                 self.players[i].setPos(150 + self.widthPosition + self.widthPosition * i + self.padding * i, 500)
+
+    def checkAlivePlayers(self):
+        anyAlive = False
+        for player in self.players:
+            if player.lives != 0:
+                anyAlive = True
+
+        if anyAlive == False:
+                self.viewlist.setCurrentWidget(self.viewlist.widget(5))
+
