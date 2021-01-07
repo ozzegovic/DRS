@@ -54,7 +54,6 @@ class TournamentTree(QGraphicsView):
         self.playerslayout2.setAlignment(Qt.AlignHCenter)
         self.playerslayout1.setAlignment(Qt.AlignHCenter)
 
-        self.buttonsLayout.addWidget(self.playbutton)
         self.buttonsLayout.addWidget(self.backbutton)
         self.buttonsLayout.setAlignment(Qt.AlignCenter)
 
@@ -92,7 +91,7 @@ class TournamentTree(QGraphicsView):
         self.phase += 1
         # ovom metodom se poziva boardgame sa igracima koji igraju tu sledecu fazu.
 
-    def setPhaseWinner(self):
+    def setPhaseWinner(self, winner):
         pass
         # ovoj metodi boardgame prosledjuje pobednika faze. Kako vec imamo gore
         # napravljene objekte winner1phase, winner2phase, winner kada dobijemo

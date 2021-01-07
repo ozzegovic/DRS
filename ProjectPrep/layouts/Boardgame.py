@@ -84,6 +84,7 @@ class Boardgame(QGraphicsView):
         self.worker.restart()
         self.hud.restart()
         self.activateThreads()
+        self.level = 1
 
     def playerStartPositions(self, players):
         self.widthPosition = 550 / (1 + len(players))
@@ -169,6 +170,7 @@ class Boardgame(QGraphicsView):
         self.stopThreads()
 
     def speedUp(self):
+        self.level += 1
         self.hud.updateHUD()
         self.worker.decreaseperiod(0.0005)
         self.obstaclethread.decreaseperiod(0.0005)
