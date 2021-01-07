@@ -104,7 +104,7 @@ class Boardgame(QGraphicsView):
         self.i = 0
         for player in players:
             # players dicttionary: key(player) - playerName, value(players[player]) - playerCar
-            self.player = Player(player, ('PNG/Car_' + str(players[player]) + '_Main_Positions/Car_' + str(players[player]) + '_01'), self.keybeds[self.i], self.grafickascena.width() / 15)
+            self.player = Player(player, ('PNG/Car_' + str(players[player]) + '_Main_Positions/Car_' + str(players[player]) + '_01'), self.keybeds[self.i], self.grafickascena.width() / 15,str(players[player]))
             self.players.append(self.player)
             self.grafickascena.addItem(self.player)
             self.i = + 1
@@ -227,7 +227,7 @@ class Boardgame(QGraphicsView):
                         if player.killable == True:
                             if item.id == 0:
                                 player.die()
-                                self.checkAlivePlayers()
+                                self.checkAlivePlayers(player.playerName,player.Car)
                                 self.setPlayerPosition(player)
                             elif item.id == 1:
                                 player.disableMoving()
@@ -243,12 +243,14 @@ class Boardgame(QGraphicsView):
             if player == self.players[i]:
                 self.players[i].setPos(150 + self.widthPosition + self.widthPosition * i + self.padding * i, 500)
 
-    def checkAlivePlayers(self):
+    def checkAlivePlayers(self,playerName,playerCar):
         anyAlive = False
         for player in self.players:
             if player.lives != 0:
                 anyAlive = True
 
         if anyAlive == False:
-                self.viewlist.setCurrentWidget(self.viewlist.widget(5))
+                self.View = self.viewlist.widget(5)
+                self.View.lastPlayer(playerName,playerCar)
+                self.viewlist.setCurrentWidget(self.View)
 
