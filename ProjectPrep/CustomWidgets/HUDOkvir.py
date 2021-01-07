@@ -35,8 +35,8 @@ class HUDOkvir(QGraphicsView):
         self.grafickascena.addItem(self.image)
 
         for i in range(3):
-            heart = QPixmap('PNG/heartlife32.png')
-            heart = QGraphicsPixmapItem(heart)
+            heart = QPixmap('PNG/Main_UI/HP_Dot.png')
+            heart = QGraphicsPixmapItem(heart.scaledToWidth(34))
             heart.moveBy(8+i*36,160)
             self.grafickascena.addItem(heart)
 
@@ -44,8 +44,18 @@ class HUDOkvir(QGraphicsView):
         #-----------------------------------------
 
         self.label = QLabel(self.name)
+        self.label.setFixedWidth(120)
         self.label.move(33, 11)
         self.label.setStyleSheet('color: yellow; font-weight: bold; background: transparent;')
 
         self.grafickascena.addWidget(self.label)
         self.setScene(self.grafickascena)
+
+    def setNameAndCar(self, name, car):
+
+        self.label.setText(name)
+        if car == '0':
+            self.grafickascena.removeItem(self.image)
+        else:
+            self.image.setPixmap(QPixmap('PNG/Car_' + car + '_Main_Positions/Car_' + car + '_01').scaled(100, 120))
+            self.grafickascena.addItem(self.image)

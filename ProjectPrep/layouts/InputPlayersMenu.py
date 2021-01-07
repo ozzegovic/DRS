@@ -18,6 +18,7 @@ class InputPlayersView(QGraphicsView):
         # dictionary {"username" : carNumber}
         # dictionary needs to reset so that previously added players wouldn't be kept
         self.players = {}
+        self.gametype = 0
 
         self.infoLabel = QLabel()
         self.initUI()
@@ -59,7 +60,7 @@ class InputPlayersView(QGraphicsView):
         self.setScene(self.grafickascena)
 
     # make a specific amount of input player frames
-    def initFrames(self, number):
+    def initFrames(self, number, gametype):
         for okvir in self.playerFrames:
             okvir.deleteLater()
         self.playerFrames.clear()
@@ -70,6 +71,8 @@ class InputPlayersView(QGraphicsView):
         for okvir in self.playerFrames:
             self.playersLayout.addWidget(okvir)
         self.playersLayout.setAlignment(Qt.AlignCenter)
+
+        self.gametype = gametype
 
     def setbackground(self):
         tempImg = QPixmap('PNG/9c49087c09fd07a10ae3887a7825f389.jpg')
@@ -103,15 +106,25 @@ class InputPlayersView(QGraphicsView):
             self.infoLabel.setText('All players must have a unique name.')
             self.infoLabel.adjustSize()
         else:
-            self.boardgame = self.viewlist.widget(2)
-            self.boardgame.initPlayers(self.players)
-            self.boardgame.restart()
-            self.boardgame.hud.initHudFrames(self.players)
-            self.viewlist.setCurrentWidget(self.boardgame)
+            if self.gametype == 0 or self.gametype == 1:
+
+                self.boardgame = self.viewlist.widget(2)
+                self.boardgame.initPlayers(self.players, self.gametype)
+                self.viewlist.setCurrentWidget(self.boardgame)
+                self.resetPlayers()
+            elif self.gametype == 2:
+
+                self.tournamentview = self.viewlist.widget(5)
+                self.tournamentview.setPlayers(self.players)
+                self.viewlist.setCurrentWidget(self.viewlist.widget(5))
+                self.resetPlayers()
 
     def backbuttonClick(self):
         # back to input number of players
-        self.viewlist.setCurrentWidget(self.viewlist.widget(3))
+        if self.gametype == 0:
+            self.viewlist.setCurrentWidget(self.viewlist.widget(3))
+        else:
+            self.viewlist.setCurrentWidget(self.viewlist.widget(0))
 
     def resetPlayers(self):
         self.players = {}

@@ -25,9 +25,9 @@ class menuView(QGraphicsView):
         self.setbackground()
         self.playbutton = StyleButton('PNG/Buttons/Play_BTN.png', 'Play', 40, 40)
         self.playbutton.clicked.connect(self.playbuttonclick)
-        self.tourney2button = StyleButton('PNG/Buttons/Settings_BTN.png', '2 Player tournament', 40, 40)
+        self.tourney2button = StyleButton('PNG/You_Win/Play_Tournament_1.png', '2 Player tournament', 40, 40)
         self.tourney2button.clicked.connect(self.tournament2click)
-        self.tourney4button = StyleButton('PNG/Buttons/Settings_BTN.png', '4 Player tournament', 40, 40)
+        self.tourney4button = StyleButton('PNG/You_Win/Play_Tournament_2.png', '4 Player tournament', 40, 40)
         self.tourney4button.clicked.connect(self.tournament4click)
         self.exitbtn = StyleButton('PNG/Buttons/Close_BTN.png', 'Exit', 40, 40)
         self.exitbtn.clicked.connect(self.closeThis)
@@ -45,13 +45,14 @@ class menuView(QGraphicsView):
         self.setScene(self.grafickascena)
 
     def tournament2click(self):
-        self.turnir = self.viewlist.widget(5)
-        self.turnir.initFrames(2)
+        self.turnir = self.viewlist.widget(4)
+        self.turnir.initFrames(2, 1)
         self.viewlist.setCurrentWidget(self.turnir)
 
     def tournament4click(self):
-        self.turnir = self.viewlist.widget(5)
-        self.turnir.initFrames(4)
+
+        self.turnir = self.viewlist.widget(4)
+        self.turnir.initFrames(4, 2)
         self.viewlist.setCurrentWidget(self.turnir)
 
     def setbackground(self):

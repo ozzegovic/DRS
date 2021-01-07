@@ -61,8 +61,6 @@ class pauseView(QGraphicsView):
         self.boardgame.deletePlayers()
         self.hide()
         # remove added players from the dictionary
-        self.inputPlayers = self.viewlist.widget(4)
-        self.inputPlayers.resetPlayers()
         # back to main menu
         self.viewlist.setCurrentWidget(self.viewlist.widget(0))
 

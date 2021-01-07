@@ -7,11 +7,10 @@ from ProjectPrep.layouts.boardNotifier import Worker
 from ProjectPrep.CustomWidgets.Obstacle import Obstacle
 
 class Player(QGraphicsPixmapItem):
-    def __init__(self, playerName, playerCar , keybed, width, car):
+    def __init__(self, playerName, playerCar , keybed, width):
         self.playerName = playerName
-        self.playerCar = playerCar
-        self.Car=car
-        self.qpix = QPixmap(playerCar)
+        self.Car = playerCar
+        self.qpix = QPixmap(('PNG/Car_' + playerCar + '_Main_Positions/Car_' + playerCar + '_01'))
         self.qpix = self.qpix.scaled(width, width * 1.5)
         self.keybed = keybed
         super(Player, self).__init__(self.qpix)

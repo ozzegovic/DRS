@@ -7,8 +7,8 @@ from ProjectPrep.layouts.SettingsMenu import SettingsView
 from ProjectPrep.layouts.Boardgame import Boardgame
 from ProjectPrep.layouts.pauseView import pauseView
 from ProjectPrep.layouts.numberOfPlayers import NumberOfPlayersView
-from ProjectPrep.layouts.tournament import Tournament
 from ProjectPrep.layouts.WinnerMenu import  WinnerView
+from ProjectPrep.layouts.tournament import TournamentTree
 
 
 class MainWindow(QMainWindow):
@@ -24,7 +24,7 @@ class MainWindow(QMainWindow):
         self.Settings = SettingsView(self.centralWidget)
         self.InputSettings = InputPlayersView(self.centralWidget)
         self.NumberOfPlayers = NumberOfPlayersView(self.centralWidget)
-        self.tournament = Tournament(self.centralWidget)
+        self.tournament = TournamentTree(self.centralWidget)
         self.Winner = WinnerView(self.centralWidget)
         self.setGeometry(0, 0, 1000, 850)
 
@@ -38,8 +38,8 @@ class MainWindow(QMainWindow):
         self.centralWidget.addWidget(self.board) # 2. element view liste
         self.centralWidget.addWidget(self.NumberOfPlayers) # 3. element view liste
         self.centralWidget.addWidget(self.InputSettings) # 4. element view liste
-        self.centralWidget.addWidget(self.tournament) # 5. element liste
-        self.centralWidget.addWidget(self.Winner)
+        self.centralWidget.addWidget(self.tournament) # 5. element view liste
+        self.centralWidget.addWidget(self.Winner) # 6. element view liste
 
         self.centralWidget.setCurrentWidget(self.mainmenu)
         self.setWindowTitle('Crazy Cars')
