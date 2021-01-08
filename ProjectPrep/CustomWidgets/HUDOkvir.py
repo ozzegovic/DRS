@@ -10,6 +10,7 @@ class HUDOkvir(QGraphicsView):
         super().__init__()
         self.name = name
         self.car = car
+        self.lives = [] #array of QGraphicsPixmapItem for hearts
         self.initUI()
 
     def initUI(self):
@@ -34,13 +35,8 @@ class HUDOkvir(QGraphicsView):
         self.image.moveBy(25, 30)
         self.grafickascena.addItem(self.image)
 
-        for i in range(3):
-            heart = QPixmap('PNG/Main_UI/HP_Dot.png')
-            heart = QGraphicsPixmapItem(heart.scaledToWidth(34))
-            heart.moveBy(8+i*36,160)
-            self.grafickascena.addItem(heart)
-
-
+        self.initLives(4) # makes 4 heart images and positions them correctly
+        self.setLives(3)  # show only 3 on init
         #-----------------------------------------
 
         self.label = QLabel(self.name)
@@ -59,3 +55,18 @@ class HUDOkvir(QGraphicsView):
         else:
             self.image.setPixmap(QPixmap('PNG/Car_' + car + '_Main_Positions/Car_' + car + '_01').scaled(100, 120))
             self.grafickascena.addItem(self.image)
+
+    def initLives(self, lifeCount):
+        for i in range(lifeCount):
+            heart = QPixmap('PNG/Main_UI/HP_Dot.png')
+            heart = QGraphicsPixmapItem(heart.scaledToWidth(32))
+            heart.moveBy(8+i*33, 160)
+            self.lives.append(heart)
+            self.grafickascena.addItem(heart)
+
+    # show the exact amount of hearts a specific player has
+    def setLives(self, lifeCount):
+        for i in range(lifeCount):
+            self.lives[i].show()
+        for i in range(4 - lifeCount):  # maximum number of lives is 4, calculate how many to hide
+            self.lives[3-i].hide()      # start from the last

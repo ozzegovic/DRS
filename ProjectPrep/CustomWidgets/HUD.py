@@ -16,7 +16,8 @@ class HUD(QGraphicsView):
         self.label.setFont(QFont('Ariel', 25))
         self.label.setAlignment(Qt.AlignCenter)
 
-        self.players = [] #igraci
+        # dictionary {playerName : hudFrame} easier to access each player's frame
+        self.players = {} #igraci
         self.initUI()
 
     def initUI(self):
@@ -61,12 +62,21 @@ class HUD(QGraphicsView):
         self.label.setText("Level\n\n{}".format(self.level))
 
     def initHudFrames(self, players):
-        for okvir in self.players:
-            okvir.deleteLater()
+        for key in self.players.keys():
+           self.players[key].deleteLater() #delete hudFrames
 
-        self.players.clear()
+        self.players = {}
 
         for player in players:
-            okvir = HUDOkvir(player, players[player])
-            self.players.append(okvir)
+            okvir = HUDOkvir(player.playerName, player.Car)
+            okvir.setLives(player.lives)
+            self.players[player.playerName] = okvir #init dictionary
+            self.updatePlayerLives(player)
             self.hbox.addWidget(okvir)
+
+    def updatePlayerLives(self, player):
+        # self.players - dictionary {playerName : hudFrame}
+        # easier to access and update lives for a specific player
+        hudOkvir = self.players[player.playerName]
+        hudOkvir.setLives(player.lives)
+

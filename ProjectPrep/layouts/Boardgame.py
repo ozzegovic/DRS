@@ -83,6 +83,8 @@ class Boardgame(QGraphicsView):
         self.playerStartLives(self.players)
         self.worker.restart()
         self.hud.restart()
+        self.hud.initHudFrames(self.players)
+        self.playerStartLivesHud()
         self.activateThreads()
         self.level = 1
 
@@ -96,6 +98,11 @@ class Boardgame(QGraphicsView):
     def playerStartLives(self, players):
         for player in players:
             player.resetLives()
+
+    # reset hearts shown in the hud frame for each player
+    def playerStartLivesHud(self):
+        for player in self.players:
+            self.hud.updatePlayerLives(player)
 
     def stopPlayerThreads(self):
         for player in self.players:
@@ -111,14 +118,15 @@ class Boardgame(QGraphicsView):
         self.players.clear()
         self.i = 0
         for player in players:
-            # players dicttionary: key(player) - playerName, value(players[player]) - playerCar
+            # players dictionary: key(player) - playerName, value(players[player]) - playerCar
             self.player = Player(player, str(players[player]), self.keybeds[self.i], self.grafickascena.width() / 15)
             self.players.append(self.player)
             self.grafickascena.addItem(self.player)
             self.i = + 1
         self.restart()
 
-        self.hud.initHudFrames(players)
+        # init hud frame with array of Player objects
+        self.hud.initHudFrames(self.players)
         self.gametype = gametype
 
     # remove each car from the graphics scene, stop all threads, delete players list
@@ -240,6 +248,7 @@ class Boardgame(QGraphicsView):
                         if player.killable == True:
                             if item.id == 0:
                                 player.die()
+                                self.hud.updatePlayerLives(player)
                                 self.checkAlivePlayers(player.playerName,player.Car)
                                 self.setPlayerPosition(player)
                             elif item.id == 1:
@@ -247,6 +256,8 @@ class Boardgame(QGraphicsView):
                             elif item.id == 2:
                                 item.hide()  # if not hidden it would add lives as long as the car is still colliding with it, other players could get it as well
                                 player.addLife()
+                                self.hud.updatePlayerLives(player)
+
 
     # position the player on the original starting position
     def setPlayerPosition(self, player):
