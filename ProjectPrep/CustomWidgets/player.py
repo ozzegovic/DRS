@@ -144,7 +144,8 @@ class Player(QGraphicsPixmapItem):
         self.key_notifier.start()
 
     def addLife(self):
-        self.lives += 1
+        if self.lives < 4:  # lives limited to 4
+            self.lives += 1
         print("Player: {}, Lives: {}".format(self.playerName, self.lives))
 
     def disableMoving(self):
