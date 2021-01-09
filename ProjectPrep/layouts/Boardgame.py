@@ -52,9 +52,12 @@ class Boardgame(QGraphicsView):
         self.collisionNotifier = Worker(0.01)
         self.collisionNotifier.update.connect(self.checkCollision)
 
-        self.changeStart = False    # 1. step - add one transition image
-        self.changeTransition = False # 2. step - add transition image on one and new image on the other (the one that previously had the transition image)
+        self.changeStart = False    # 1. step - set one transition image - self.graphicsPixmapItem set to transition image
+        self.changeTransition = False # 2. step - set transition image on one and new image on the other (the one that previously had the transition image)
+                                      # self.graphicsPixmapItem - new level image
+                                      # self.mapcontiniue - transition image
         self.changeCompleted = False  # 3. step - set the new image on the one that previously had the transition image
+                                      # self.mapcontinue - new level image
         self.nextBackground = 1
 
     def activateThreads(self):
@@ -206,8 +209,6 @@ class Boardgame(QGraphicsView):
         self.pathNext = "PNG/Background/road" + str(self.nextBackground%5)
         self.pathTransition = "PNG/Background/road" + str((self.nextBackground - 1) % 5) + str(self.nextBackground % 5)
         self.nextBackground = self.nextBackground + 1
-        print(self.pathNext)
-        print(self.pathTransition)
 
     def startBackgroundTransition(self):
         self.transitionImage = QPixmap(self.pathTransition)
@@ -239,15 +240,11 @@ class Boardgame(QGraphicsView):
 
         if self.graphicsPixmapItem.y() >= 0:
             if self.changeStart:
-                print(1)
                 self.startBackgroundTransition()
             elif self.changeTransition:
-                print(2)
                 self.middleBackgroundTransition()
             elif self.changeCompleted:
-                print(3)
                 self.completeBackgroundTransition()
-
 
             self.graphicsPixmapItem.setY(-self.tempImg.height())
 
