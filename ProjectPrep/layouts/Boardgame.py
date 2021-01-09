@@ -52,6 +52,10 @@ class Boardgame(QGraphicsView):
         self.collisionNotifier = Worker(0.01)
         self.collisionNotifier.update.connect(self.checkCollision)
 
+        self.changeStart = False    # 1. step - add one transition image
+        self.changeTransition = False # 2. step - add transition image on one and new image on the other (the one that previously had the transition image)
+        self.changeCompleted = False  # 3. step - set the new image on the one that previously had the transition image
+        self.nextBackground = 1
 
     def activateThreads(self):
         self.worker.start() # resume option, not reseting obstacle position
@@ -85,6 +89,7 @@ class Boardgame(QGraphicsView):
         self.hud.restart()
         self.hud.initHudFrames(self.players)
         self.playerStartLivesHud()
+        self.resetBackground()
         self.activateThreads()
         self.level = 1
 
@@ -142,7 +147,7 @@ class Boardgame(QGraphicsView):
         self.grafickascena = QGraphicsScene()
         self.grafickascena.setSceneRect(0, 0, 1000, 850)
 
-        self.tempImg = QPixmap('PNG/background-1.png')
+        self.tempImg = QPixmap('PNG/background/road0.png')
         self.tempImg = self.tempImg.scaled(self.grafickascena.width(), self.grafickascena.height())
 
         self.graphicsPixmapItem = QGraphicsPixmapItem(self.tempImg)
@@ -179,9 +184,52 @@ class Boardgame(QGraphicsView):
 
     def speedUp(self):
         self.level += 1
+        if self.level % 4 == 0:
+            print(self.level)
+            self.setNextBackgroundPath()
+            self.changeStart = True
         self.hud.updateHUD()
         self.worker.decreaseperiod(0.0005)
         self.obstaclethread.decreaseperiod(0.0005)
+
+    def resetBackground(self):
+        self.changeStart = False
+        self.changeTransition = False
+        self.changeCompleted = False
+        self.nextBackground = 1
+        self.startBackground = QPixmap("PNG/Background/road0")
+        self.startBackground = self.startBackground.scaled(self.grafickascena.width(),self.grafickascena.height())
+        self.graphicsPixmapItem.setPixmap(self.startBackground)
+        self.mapContinue.setPixmap(self.startBackground)
+
+    def setNextBackgroundPath(self):
+        self.pathNext = "PNG/Background/road" + str(self.nextBackground%5)
+        self.pathTransition = "PNG/Background/road" + str((self.nextBackground - 1) % 5) + str(self.nextBackground % 5)
+        self.nextBackground = self.nextBackground + 1
+        print(self.pathNext)
+        print(self.pathTransition)
+
+    def startBackgroundTransition(self):
+        self.transitionImage = QPixmap(self.pathTransition)
+        self.transitionImage = self.transitionImage.scaled(self.grafickascena.width(),self.grafickascena.height())
+        self.graphicsPixmapItem.setPixmap(self.transitionImage)
+        self.changeStart = False
+        self.changeTransition = True
+    def middleBackgroundTransition(self):
+        self.transitionImage = QPixmap(self.pathTransition)
+        self.transitionImage = self.transitionImage.scaled(self.grafickascena.width(),self.grafickascena.height())
+        self.mapContinue.setPixmap(self.transitionImage)
+        self.newImage = QPixmap(self.pathNext)
+        self.newImage = self.newImage.scaled(self.grafickascena.width(),self.grafickascena.height())
+        self.graphicsPixmapItem.setPixmap(self.newImage)
+        self.changeTransition = False
+        self.changeCompleted = True
+
+    def completeBackgroundTransition(self):
+        self.newImage = QPixmap(self.pathNext)
+        self.newImage = self.newImage.scaled(self.grafickascena.width(), self.grafickascena.height())
+        self.mapContinue.setPixmap(self.newImage)
+        self.changeCompleted = False
 
     @pyqtSlot()
     def movepicture(self):
@@ -190,6 +238,17 @@ class Boardgame(QGraphicsView):
         self.mapContinue.setY(res1)
 
         if self.graphicsPixmapItem.y() >= 0:
+            if self.changeStart:
+                print(1)
+                self.startBackgroundTransition()
+            elif self.changeTransition:
+                print(2)
+                self.middleBackgroundTransition()
+            elif self.changeCompleted:
+                print(3)
+                self.completeBackgroundTransition()
+
+
             self.graphicsPixmapItem.setY(-self.tempImg.height())
 
     @pyqtSlot()
