@@ -106,13 +106,16 @@ class InputPlayersView(QGraphicsView):
             self.infoLabel.setText('All players must have a unique name.')
             self.infoLabel.adjustSize()
         else:
-            if self.gametype == 0 or self.gametype == 1:
+            if self.gametype == 0 or self.gametype == 1: #1v1
 
                 self.boardgame = self.viewlist.widget(2)
                 self.boardgame.initPlayers(self.players, self.gametype)
                 self.viewlist.setCurrentWidget(self.boardgame)
+                # self.tournamentview = self.viewlist.widget(5)
+                # self.tournamentview.setPlayers(self.players)
+
                 self.resetPlayers()
-            elif self.gametype == 2:
+            elif self.gametype == 2: #4 players
 
                 self.tournamentview = self.viewlist.widget(5)
                 self.tournamentview.setPlayers(self.players)

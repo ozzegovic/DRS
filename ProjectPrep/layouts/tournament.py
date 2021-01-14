@@ -21,9 +21,9 @@ class TournamentTree(QGraphicsView):
         self.winner1phase = HUDOkvir('?', 0) # pobednik prve faze
         self.winner2phase = HUDOkvir('?', 0) # pobednik druge faze
         self.winner = HUDOkvir('?', 0) # pobednik trece faze(definitivni pobednik turnira.)
-        self.phase = 0
+        self.phase = -1
         self.players = {}
-
+        self.phaseplayers = {}
         self.infoLabel = QLabel()
         self.initUI()
 
@@ -34,6 +34,9 @@ class TournamentTree(QGraphicsView):
 
         self.setbackground()
         self.backbutton = StyleButton('PNG/Buttons/Close_BTN.png', 'Back', 40, 40)
+        self.playbutton = StyleButton('PNG/Buttons/Play_BTN.png', 'Play', 40, 40)
+
+        self.playbutton.clicked.connect(self.initNextPhase)
         self.backbutton.clicked.connect(self.backbuttonClick)
 
         self.holder = QVBoxLayout()
@@ -55,6 +58,7 @@ class TournamentTree(QGraphicsView):
         self.playerslayout1.setAlignment(Qt.AlignHCenter)
 
         self.buttonsLayout.addWidget(self.backbutton)
+        self.buttonsLayout.addWidget(self.playbutton)
         self.buttonsLayout.setAlignment(Qt.AlignCenter)
 
         self.holder.addWidget(self.titleLabel)
@@ -78,21 +82,61 @@ class TournamentTree(QGraphicsView):
         self.playerslayout3.setAlignment(Qt.AlignHCenter)
 
         self.players = playersdict
+        i = 0
+        for player in self.players:
+            self.phaseplayers[player] = self.players[player]
+            i = i + 1
+            if i == 2:
+                break
+
+
+
+        self.players = playersdict
         self.resetWinners()
 
+
+
     def resetWinners(self):
-        self.phase = 0
+        self.phase = -1
         self.winner1phase.setNameAndCar('?', '0')
         self.winner2phase.setNameAndCar('?', '0')
         self.winner.setNameAndCar('?', '0')
 
     def initNextPhase(self):
 
-        self.phase += 1
+        self.phase += 1 #prva faze 0
+        if self.phase >= 3: #dont start when winner is known
+            return
+        self.board = self.viewlist.widget(2)
+        if self.phase == 1:
+            current = {}
+            for player in self.players:
+                if player not in self.phaseplayers:
+                    current[player] = self.players[player]
+            self.phaseplayers = current
+
+        if self.phase == 2:
+            current = {}
+            name, car = self.winner1phase.getNameAndCar()
+            current[name] = car
+            name, car = self.winner2phase.getNameAndCar()
+            current[name] = car
+            self.phaseplayers = current
+
+        self.board.initPlayers(self.phaseplayers, 2)  # treba 2
+        self.viewlist.setCurrentWidget(self.board)
+
         # ovom metodom se poziva boardgame sa igracima koji igraju tu sledecu fazu.
 
-    def setPhaseWinner(self, winner):
-        pass
+    def setPhaseWinner(self, winner, car):
+        if self.phase == 0:
+            self.winner1phase.setNameAndCar(winner, car)
+        if self.phase == 1:
+            self.winner2phase.setNameAndCar(winner, car)
+        if self.phase == 2:
+            self.winner.setNameAndCar(winner, car)
+            # self.resetWinners()
+            # self.resetPlayers()
         # ovoj metodi boardgame prosledjuje pobednika faze. Kako vec imamo gore
         # napravljene objekte winner1phase, winner2phase, winner kada dobijemo
         # pobednika neke faze, u tim winerima setujemo samo sliku i name,
@@ -121,3 +165,4 @@ class TournamentTree(QGraphicsView):
 
     def resetPlayers(self):
         self.players = {}
+        self.phaseplayers = {}

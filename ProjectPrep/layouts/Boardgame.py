@@ -25,7 +25,8 @@ class Boardgame(QGraphicsView):
         self.obstacles = [Obstacle(100), Obstacle(100),Obstacle(100), Obstacle(100)]
         self.previous = 0  #obstacle
         self.viewlist = centralWidget
-
+        self.winnerCar = ""
+        self.winnerName = ""
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.keybed1 = [Qt.Key_Right, Qt.Key_Down, Qt.Key_Up, Qt.Key_Left]
@@ -33,6 +34,8 @@ class Boardgame(QGraphicsView):
         self.keybeds = [self.keybed1, self.keybed2]
         self.initUI()
         self.gametype = 0
+
+
 
         #timer
         self.level = 1
@@ -42,6 +45,7 @@ class Boardgame(QGraphicsView):
         self.pauseTimer = False
 
         self.players = []  # moving cars
+        self.deaths = [0, 0, 0, 0] #number of deaths per player
 
         self.worker = Worker(0.01)
         self.worker.update.connect(self.movepicture)
@@ -95,6 +99,7 @@ class Boardgame(QGraphicsView):
         self.resetBackground()
         self.activateThreads()
         self.level = 1
+        self.deaths = [0, 0]
 
     def playerStartPositions(self, players):
         self.widthPosition = 550 / (1 + len(players))
@@ -135,6 +140,9 @@ class Boardgame(QGraphicsView):
 
         # init hud frame with array of Player objects
         self.hud.initHudFrames(self.players)
+        if gametype == 1:# 1v1 turnir
+            self.hud.setMode(1)
+
         self.gametype = gametype
 
     # remove each car from the graphics scene, stop all threads, delete players list
@@ -144,6 +152,7 @@ class Boardgame(QGraphicsView):
 
         self.stopThreads()
         self.players = []
+        self.deaths = [0, 0]
 
     def initUI(self):
 
@@ -314,6 +323,63 @@ class Boardgame(QGraphicsView):
                                 player.addLife()
                                 self.hud.updatePlayerLives(player)
 
+
+                            if self.gametype == 1: #1v1
+                                index = self.players.index(player)
+                                self.deaths[index] = self.deaths[index] + 1
+                                self.hud.setHUDResult(self.deaths[0], self.deaths[1])
+
+                                if self.deaths[index] == 2:
+                                    if index == 1:
+                                        if self.deaths[0] == 0:
+                                            self.setTournamentWinner(self.players[0])
+                                            # self.drawTournamentTree(self.players[0])
+
+                                            self.deletePlayers()
+
+                                    if index == 0:
+                                        if self.deaths[1] == 0:
+                                            self.setTournamentWinner(self.players[1])
+                                            # self.drawTournamentTree(self.players[1])
+
+                                            self.deletePlayers()
+
+                                elif self.deaths[index] == 3:
+                                    if index == 1:
+                                        self.setTournamentWinner(self.players[0])
+                                        # self.drawTournamentTree(self.players[0])
+                                        self.deletePlayers()
+                                    else:
+                                        self.setTournamentWinner(self.players[1])
+                                        # self.drawTournamentTree(self.players[1])
+
+                                        self.deletePlayers()
+
+                        #4 man tournament
+                            if self.gametype == 2:
+                                index = self.players.index(player)
+                                self.deaths[index] = self.deaths[index] + 1
+                                if self.players[index].getLives() == 0:
+                                    if index == 1:
+                                        # self.setTournamentWinner(self.players[0])
+                                        self.drawTournamentTree(self.players[0])
+                                        self.deletePlayers()
+                                    else:
+                                        # self.setTournamentWinner(self.players[1])
+                                        self.drawTournamentTree(self.players[1])
+                                        self.deletePlayers()
+
+    def drawTournamentTree(self, player):
+        self.tree = self.viewlist.widget(5)
+        self.winnerName, self.winnerCar = player.getNameCar()
+        self.tree.setPhaseWinner(self.winnerName, self.winnerCar)
+        self.viewlist.setCurrentWidget(self.tree)
+
+    def setTournamentWinner(self, player):
+        self.winner = self.viewlist.widget(6)
+        self.winnerName, self.winnerCar = player.getNameCar()
+        self.winner.lastPlayer(self.winnerName, self.winnerCar)
+        self.viewlist.setCurrentWidget(self.winner)
 
     # position the player on the original starting position
     def setPlayerPosition(self, player):

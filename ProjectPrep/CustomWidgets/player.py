@@ -46,6 +46,8 @@ class Player(QGraphicsPixmapItem):
                 self.killable = False  # died three times already, no need to count lives anymore
             else:
                 self.makeUnkillable() # calls timer
+    def getLives(self):
+        return self.lives
 
     def keyPressEvent(self, event):
         self.key_notifier.add_key(event.key())
@@ -160,3 +162,5 @@ class Player(QGraphicsPixmapItem):
             self.key_notifier.start()   # if didn't lose a life while unable to move, enable moving
                                         # if died while unable to move, makeKillable will enable moving after the safe timer expires
 
+    def getNameCar(self):
+        return self.playerName, self.Car

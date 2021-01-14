@@ -47,7 +47,12 @@ class HUDOkvir(QGraphicsView):
         self.grafickascena.addWidget(self.label)
         self.setScene(self.grafickascena)
 
+    def getNameAndCar(self):
+        return self.name, self.car
+
     def setNameAndCar(self, name, car):
+        self.name = name
+        self.car = car
 
         self.label.setText(name)
         if car == '0':

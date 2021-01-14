@@ -15,7 +15,7 @@ class HUD(QGraphicsView):
         self.label.setFixedWidth(300)
         self.label.setFont(QFont('Ariel', 25))
         self.label.setAlignment(Qt.AlignCenter)
-
+        self.mode = 0
         # dictionary {playerName : hudFrame} easier to access each player's frame
         self.players = {} #igraci
         self.initUI()
@@ -52,7 +52,17 @@ class HUD(QGraphicsView):
         self.level = 1
         self.label.setText("Level\n\n{}".format(self.level))
 
+    def setMode(self, mode):
+        self.mode = mode
+        self.label.setText("Result\n\n0 - 0")
+
+    def setHUDResult(self, deaths1, deaths2):
+        self.label.setText("Result\n\n{} - {}".format(deaths2, deaths1))
+
     def updateHUD(self):
+        if self.mode == 1:
+            return
+
         if self.level < 10:
             self.level += 1
 
