@@ -81,6 +81,7 @@ class TournamentTree(QGraphicsView):
 
         self.playerslayout3.setAlignment(Qt.AlignHCenter)
 
+        self.phaseplayers.clear()
         self.players = playersdict
         i = 0
         for player in self.players:
@@ -88,13 +89,8 @@ class TournamentTree(QGraphicsView):
             i = i + 1
             if i == 2:
                 break
-
-
-
         self.players = playersdict
         self.resetWinners()
-
-
 
     def resetWinners(self):
         self.phase = -1
