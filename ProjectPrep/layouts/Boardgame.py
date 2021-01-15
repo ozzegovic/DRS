@@ -334,16 +334,12 @@ class Boardgame(QGraphicsView):
                                         if self.deaths[0] == 0:
                                             self.setTournamentWinner(self.players[0])
                                             # self.drawTournamentTree(self.players[0])
-
                                             self.deletePlayers()
-
                                     if index == 0:
                                         if self.deaths[1] == 0:
                                             self.setTournamentWinner(self.players[1])
                                             # self.drawTournamentTree(self.players[1])
-
                                             self.deletePlayers()
-
                                 elif self.deaths[index] == 3:
                                     if index == 1:
                                         self.setTournamentWinner(self.players[0])
@@ -352,9 +348,7 @@ class Boardgame(QGraphicsView):
                                     else:
                                         self.setTournamentWinner(self.players[1])
                                         # self.drawTournamentTree(self.players[1])
-
                                         self.deletePlayers()
-
                         #4 man tournament
                             if self.gametype == 2:
                                 index = self.players.index(player)

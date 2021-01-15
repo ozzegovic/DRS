@@ -84,7 +84,7 @@ class TournamentTree(QGraphicsView):
         self.phaseplayers.clear()
         self.players = playersdict
         i = 0
-        for player in self.players:
+        for player in self.players: #dictionary nije poredjan, treba promeniti
             self.phaseplayers[player] = self.players[player]
             i = i + 1
             if i == 2:
@@ -119,7 +119,7 @@ class TournamentTree(QGraphicsView):
             current[name] = car
             self.phaseplayers = current
 
-        self.board.initPlayers(self.phaseplayers, 2)  # treba 2
+        self.board.initPlayers(self.phaseplayers, 2)  # 2 - id 4v4 turnir
         self.viewlist.setCurrentWidget(self.board)
 
         # ovom metodom se poziva boardgame sa igracima koji igraju tu sledecu fazu.
