@@ -93,6 +93,7 @@ class Boardgame(QGraphicsView):
         self.playerStartPositions(self.players)
         self.playerStartLives(self.players)
         self.worker.restart()
+        self.obstaclethread.restart()
         self.hud.restart()
         self.hud.initHudFrames(self.players)
         self.playerStartLivesHud()
