@@ -137,6 +137,7 @@ class Player(QGraphicsPixmapItem):
     def makeUnkillable(self):
         self.killable = False
         self.safeTimer.start(5000)  # After 5 seconds, calls makeKillable.
+        self.effect.setColor(QColor(189, 189, 189))
         self.effect.setEnabled(True)
 
     def makeKillable(self):
