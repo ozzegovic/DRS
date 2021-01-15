@@ -143,7 +143,6 @@ class Player(QGraphicsPixmapItem):
         self.effect.setEnabled(False)
         self.safeTimer.stop()
         self.killable = True
-        self.key_notifier.start()
 
     def addLife(self):
         if self.lives < 4:  # lives limited to 4
