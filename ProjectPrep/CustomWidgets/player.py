@@ -137,13 +137,13 @@ class Player(QGraphicsPixmapItem):
     def makeUnkillable(self):
         self.killable = False
         self.safeTimer.start(5000)  # After 5 seconds, calls makeKillable.
+        self.effect.setColor(QColor(189, 189, 189))
         self.effect.setEnabled(True)
 
     def makeKillable(self):
         self.effect.setEnabled(False)
         self.safeTimer.stop()
         self.killable = True
-        self.key_notifier.start()
 
     def addLife(self):
         if self.lives < 4:  # lives limited to 4
@@ -153,9 +153,14 @@ class Player(QGraphicsPixmapItem):
     def disableMoving(self):
         self.key_notifier.die()
         self.canMove = False
+        self.effect.setColor(QColor(255, 210, 117))
+        self.effect.setEnabled(True)
         self.notMoving.start(2000)
 
     def enableMoving(self):
+        self.effect.setEnabled(False)
+        self.effect.setColor(QColor(189, 189, 189))
+
         self.notMoving.stop()
         self.canMove = True
         if self.killable:

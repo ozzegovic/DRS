@@ -5,7 +5,6 @@ from PyQt5.QtCore import Qt, pyqtSlot, QPoint
 from PyQt5.QtGui import QPixmap, QPainter
 from PyQt5 import QtCore
 
-from ProjectPrep.CustomWidgets.ButtonNotifier import Worker
 from ProjectPrep.CustomWidgets.HUD import HUD
 from ProjectPrep.CustomWidgets.player import Player
 from ProjectPrep.layouts.InputPlayersMenu import InputPlayersView
@@ -14,7 +13,6 @@ from ProjectPrep.CustomWidgets.CustomButton import StyleButton
 from ProjectPrep.layouts.boardNotifier import Worker
 from ProjectPrep.layouts.pauseView import pauseView
 from ProjectPrep.CustomWidgets.Obstacle import Obstacle
-from ProjectPrep.CustomWidgets.collisionNotifier import CollisionNotifier
 
 class Boardgame(QGraphicsView):
 
@@ -35,45 +33,41 @@ class Boardgame(QGraphicsView):
         self.initUI()
         self.gametype = 0
 
-
-
         #timer
         self.level = 1
-        self.cntSecs = 0
         self.timer = QtCore.QTimer(self)
         self.timer.timeout.connect(self.speedUp)
-        self.pauseTimer = False
 
         self.players = []  # moving cars
         self.deaths = [0, 0, 0, 0] #number of deaths per player
 
-        self.worker = Worker(0.01)
+        self.worker = Worker(10)
         self.worker.update.connect(self.movepicture)
 
-        self.obstaclethread = Worker(0.01)
-        self.obstaclethread.update.connect(self.moveObstacle)
+        #self.obstaclethread = Worker(0.01)
+        self.worker.update.connect(self.moveObstacle)
 
-        self.collisionNotifier = Worker(0.01)
+        self.collisionNotifier = Worker(100)
         self.collisionNotifier.update.connect(self.checkCollision)
 
-        self.changeStart = False    # 1. step - set one transition image - self.graphicsPixmapItem set to transition image
-        self.changeTransition = False # 2. step - set transition image on one and new image on the other (the one that previously had the transition image)
-                                      # self.graphicsPixmapItem - new level image
-                                      # self.mapcontiniue - transition image
-        self.changeCompleted = False  # 3. step - set the new image on the one that previously had the transition image
-                                      # self.mapcontinue - new level image
+        # 1. step - set one transition image - self.graphicsPixmapItem set to transition image
+        # 2. step - set transition image on one and new image on the other (the one that previously had the transition image)
+        # self.graphicsPixmapItem - new level image
+        # self.mapcontiniue - transition image
+        # 3. step - set the new image on the one that previously had the transition image
+        # self.mapcontinue - new level image
+
+        self.phaseIndex = -1
         self.nextBackground = 1
 
     def activateThreads(self):
         self.worker.start() # resume option, not reseting obstacle position
-        self.obstaclethread.start()
         self.collisionNotifier.start()
         self.activatePlayerThreads()  # for each player start key notifier thread
-        self.timer.start(4000)
+        self.timer.start(5000)
 
     def stopThreads(self):
         self.worker.stop()
-        self.obstaclethread.stop()
         self.collisionNotifier.stop()
         self.stopPlayerThreads()    # for each player stop key notifier thread
         self.timer.stop()
@@ -92,8 +86,6 @@ class Boardgame(QGraphicsView):
         self.setStartPositions() # reset option, resets all the positions and starts the thread again
         self.playerStartPositions(self.players)
         self.playerStartLives(self.players)
-        self.worker.restart()
-        self.obstaclethread.restart()
         self.hud.restart()
         self.hud.initHudFrames(self.players)
         self.playerStartLivesHud()
@@ -198,17 +190,12 @@ class Boardgame(QGraphicsView):
     def speedUp(self):
         self.level += 1
         if self.level % 4 == 0:
-            print(self.level)
             self.setNextBackgroundPath()
-            self.changeStart = True
+            self.phaseIndex = 0
         self.hud.updateHUD()
-        self.worker.decreaseperiod(0.0005)
-        self.obstaclethread.decreaseperiod(0.0005)
 
     def resetBackground(self):
-        self.changeStart = False
-        self.changeTransition = False
-        self.changeCompleted = False
+        self.phaseIndex = -1
         self.nextBackground = 1
         self.startBackground = QPixmap("PNG/Background/road0")
         self.startBackground = self.startBackground.scaled(self.grafickascena.width(),self.grafickascena.height())
@@ -221,40 +208,36 @@ class Boardgame(QGraphicsView):
         self.nextBackground = self.nextBackground + 1
 
     def startBackgroundTransition(self):
-        self.transitionImage = QPixmap(self.pathTransition)
-        self.transitionImage = self.transitionImage.scaled(self.grafickascena.width(),self.grafickascena.height())
-        self.graphicsPixmapItem.setPixmap(self.transitionImage)
-        self.changeStart = False
-        self.changeTransition = True
+        self.graphicsPixmapItem.setPixmap(
+            QPixmap(self.pathTransition).scaled(self.grafickascena.width(), self.grafickascena.height()))
+        self.phaseIndex = 1
+
     def middleBackgroundTransition(self):
-        self.transitionImage = QPixmap(self.pathTransition)
-        self.transitionImage = self.transitionImage.scaled(self.grafickascena.width(),self.grafickascena.height())
-        self.mapContinue.setPixmap(self.transitionImage)
-        self.newImage = QPixmap(self.pathNext)
-        self.newImage = self.newImage.scaled(self.grafickascena.width(),self.grafickascena.height())
-        self.graphicsPixmapItem.setPixmap(self.newImage)
-        self.changeTransition = False
-        self.changeCompleted = True
+        self.mapContinue.setPixmap(
+            QPixmap(self.pathTransition).scaled(self.grafickascena.width(), self.grafickascena.height()))
+        self.graphicsPixmapItem.setPixmap(
+            QPixmap(self.pathNext).scaled(self.grafickascena.width(), self.grafickascena.height()))
+        self.phaseIndex = 2
 
     def completeBackgroundTransition(self):
-        self.newImage = QPixmap(self.pathNext)
-        self.newImage = self.newImage.scaled(self.grafickascena.width(), self.grafickascena.height())
-        self.mapContinue.setPixmap(self.newImage)
-        self.changeCompleted = False
+        self.mapContinue.setPixmap(
+            QPixmap(self.pathNext).scaled(self.grafickascena.width(), self.grafickascena.height()))
+        self.phaseIndex = -1
 
     @pyqtSlot()
     def movepicture(self):
-        self.graphicsPixmapItem.moveBy(0, 2)
+        self.graphicsPixmapItem.moveBy(0, 2 + self.level * 0.2)
         res1 = self.graphicsPixmapItem.y() % self.tempImg.height()
         self.mapContinue.setY(res1)
 
         if self.graphicsPixmapItem.y() >= 0:
-            if self.changeStart:
-                self.startBackgroundTransition()
-            elif self.changeTransition:
-                self.middleBackgroundTransition()
-            elif self.changeCompleted:
-                self.completeBackgroundTransition()
+            if self.phaseIndex != -1:
+                if self.phaseIndex == 0:
+                    self.startBackgroundTransition()
+                elif self.phaseIndex == 1:
+                    self.middleBackgroundTransition()
+                elif self.phaseIndex == 2:
+                    self.completeBackgroundTransition()
 
             self.graphicsPixmapItem.setY(-self.tempImg.height())
 
@@ -262,9 +245,9 @@ class Boardgame(QGraphicsView):
     def moveObstacle(self):
 
         for Ob in self.obstacles:
-            Ob.moveBy(0, 2)
+            Ob.moveBy(0, 2 + self.level * 0.2)
             if Ob.y() > (self.grafickascena.height()-200):
-                    self.createObstacle(Ob)
+                self.createObstacle(Ob)
 
     def createObstacle(self, Ob : Obstacle):
 
@@ -307,70 +290,53 @@ class Boardgame(QGraphicsView):
 
     @pyqtSlot()
     def checkCollision(self):
+
         for player in self.players:
-            if len(player.collidingItems()) != 0:
-                for item in player.collidingItems():
-                    if isinstance(item, Obstacle):
-                        if player.killable == True:
-                            if item.id == 0:
-                                player.die()
-                                self.hud.updatePlayerLives(player)
-                                self.checkAlivePlayers(player.playerName,player.Car)
-                                self.setPlayerPosition(player)
-                            elif item.id == 1:
-                                player.disableMoving()
-                            elif item.id == 2:
-                                item.hide()  # if not hidden it would add lives as long as the car is still colliding with it, other players could get it as well
-                                player.addLife()
-                                self.hud.updatePlayerLives(player)
+            for item in player.collidingItems():
+                if isinstance(item, Obstacle):
+                    if player.killable:
+                        if item.id == 0:
+                            player.die()
+                            self.hud.updatePlayerLives(player)
+                            self.checkAlivePlayers(player.playerName,player.Car)
+                            self.setPlayerPosition(player)
 
-
-                            if self.gametype == 1: #1v1
+                            if self.gametype == 1:  # 1v1
                                 index = self.players.index(player)
                                 self.deaths[index] = self.deaths[index] + 1
                                 self.hud.setHUDResult(self.deaths[0], self.deaths[1])
+                                opindex = 1 - index  # Opposite index 1 - 0 = 1, 1 - 1 = 0.
 
-                                if self.deaths[index] == 2:
-                                    if index == 1:
-                                        if self.deaths[0] == 0:
-                                            self.setTournamentWinner(self.players[0])
-                                            # self.drawTournamentTree(self.players[0])
-                                            self.deletePlayers()
-                                    if index == 0:
-                                        if self.deaths[1] == 0:
-                                            self.setTournamentWinner(self.players[1])
-                                            # self.drawTournamentTree(self.players[1])
-                                            self.deletePlayers()
-                                elif self.deaths[index] == 3:
-                                    if index == 1:
-                                        self.setTournamentWinner(self.players[0])
-                                        # self.drawTournamentTree(self.players[0])
-                                        self.deletePlayers()
-                                    else:
-                                        self.setTournamentWinner(self.players[1])
-                                        # self.drawTournamentTree(self.players[1])
-                                        self.deletePlayers()
-                        #4 man tournament
-                            if self.gametype == 2:
+                                if (self.deaths[index] == 2 and self.deaths[opindex] == 0) or self.deaths[index] == 3:
+                                    self.setTournamentWinner(self.players[opindex])
+                                    # self.drawTournamentTree(self.players[0])
+                                    self.deletePlayers()
+                            # 4 man tournament
+                            elif self.gametype == 2:
                                 index = self.players.index(player)
-                                self.deaths[index] = self.deaths[index] + 1
+                                opindex = 1 - index
+
                                 if self.players[index].getLives() == 0:
-                                    if index == 1:
-                                        # self.setTournamentWinner(self.players[0])
-                                        self.drawTournamentTree(self.players[0])
-                                        self.deletePlayers()
-                                    else:
-                                        # self.setTournamentWinner(self.players[1])
-                                        self.drawTournamentTree(self.players[1])
-                                        self.deletePlayers()
+                                    # self.setTournamentWinner(self.players[0])
+                                    self.drawTournamentTree(self.players[opindex])
+                                    self.deletePlayers()
+
+                        elif item.id == 1:
+                            player.disableMoving()
+                        elif item.id == 2:
+                            item.hide()  # if not hidden it would add lives as long as the car is still colliding with it, other players could get it as well
+                            player.addLife()
+                            self.hud.updatePlayerLives(player)
 
     def drawTournamentTree(self, player):
+        self.stopThreads()
         self.tree = self.viewlist.widget(5)
         self.winnerName, self.winnerCar = player.getNameCar()
         self.tree.setPhaseWinner(self.winnerName, self.winnerCar)
         self.viewlist.setCurrentWidget(self.tree)
 
     def setTournamentWinner(self, player):
+        self.stopThreads()
         self.winner = self.viewlist.widget(6)
         self.winnerName, self.winnerCar = player.getNameCar()
         self.winner.lastPlayer(self.winnerName, self.winnerCar)

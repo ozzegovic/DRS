@@ -63,8 +63,7 @@ class HUD(QGraphicsView):
         if self.mode == 1:
             return
 
-        if self.level < 10:
-            self.level += 1
+        self.level += 1
 
         if self.level == 10:
             self.label.setStyleSheet('color: red; font-weight: bold; background: transparent;')

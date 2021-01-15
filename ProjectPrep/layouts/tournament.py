@@ -110,8 +110,7 @@ class TournamentTree(QGraphicsView):
                 if player not in self.phaseplayers:
                     current[player] = self.players[player]
             self.phaseplayers = current
-
-        if self.phase == 2:
+        elif self.phase == 2:
             current = {}
             name, car = self.winner1phase.getNameAndCar()
             current[name] = car
