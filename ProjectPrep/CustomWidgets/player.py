@@ -152,9 +152,14 @@ class Player(QGraphicsPixmapItem):
     def disableMoving(self):
         self.key_notifier.die()
         self.canMove = False
+        self.effect.setColor(QColor(255, 210, 117))
+        self.effect.setEnabled(True)
         self.notMoving.start(2000)
 
     def enableMoving(self):
+        self.effect.setEnabled(False)
+        self.effect.setColor(QColor(189, 189, 189))
+
         self.notMoving.stop()
         self.canMove = True
         if self.killable:
