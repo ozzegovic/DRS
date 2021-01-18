@@ -21,6 +21,14 @@ class WinnerView(QGraphicsView):
         self.initUI()
 
     def initUI(self):
+        self.holder = QVBoxLayout()
+        self.playersLayout1 = QHBoxLayout()
+        self.playersLayout2 = QHBoxLayout()
+        self.playersLayout3 = QHBoxLayout()
+
+        self.playersLayout1.setAlignment(Qt.AlignCenter)
+        self.playersLayout2.setAlignment(Qt.AlignCenter)
+        self.playersLayout3.setAlignment(Qt.AlignCenter)
 
         self.grafickascena = QGraphicsScene()
         self.grafickascena.setSceneRect(0, 0, 1000, 850)
@@ -33,13 +41,11 @@ class WinnerView(QGraphicsView):
         self.backbtn2.clicked.connect(self.replay)
 
 
-        self.grafickascena.addWidget(self.backbtn1)
-        self.backbtn1.move(500, 500)
+        self.playersLayout3.addWidget(self.backbtn1)
 
-        self.grafickascena.addWidget(self.backbtn2)
-        self.backbtn2.move(250, 500)
+        self.playersLayout3.addWidget(self.backbtn2)
 
-
+        self.okvir = HUDOkvir("player1", 1)  # OVDE UBACITI KOJI IGRAC JE POBEDIO I NJEGOV AUTO
 
 
 
@@ -47,9 +53,13 @@ class WinnerView(QGraphicsView):
         tempImg = tempImg.scaled(500,100)
         self.graphicsPixmapItem = QGraphicsPixmapItem(tempImg)
         self.grafickascena.addItem(self.graphicsPixmapItem)
-        self.graphicsPixmapItem.setPos(220,100)
-
+        self.graphicsPixmapItem.setPos(220, 100)
+        self.playersLayout2.addWidget(self.okvir)
+        self.holder.addLayout(self.playersLayout1)
+        self.holder.addLayout(self.playersLayout2)
+        self.holder.addLayout(self.playersLayout3)
         self.setScene(self.grafickascena)
+        self.setLayout(self.holder)
 
     def setbackground(self):
         tempImg = QPixmap('PNG/9c49087c09fd07a10ae3887a7825f389.jpg')
@@ -72,6 +82,5 @@ class WinnerView(QGraphicsView):
         self.viewlist.setCurrentWidget(self.viewlist.widget(3))
 
     def lastPlayer(self, player, playerCar):
-        okvir = HUDOkvir(player,playerCar)  # OVDE UBACITI KOJI IGRAC JE POBEDIO I NJEGOV AUTO
-        self.grafickascena.addWidget(okvir)
-        okvir.move(370, 230)
+        self.okvir.setNameAndCar(player,playerCar)
+        self.okvir.setLives(0)

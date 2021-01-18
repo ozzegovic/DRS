@@ -29,7 +29,9 @@ class Boardgame(QGraphicsView):
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.keybed1 = [Qt.Key_Right, Qt.Key_Down, Qt.Key_Up, Qt.Key_Left]
         self.keybed2 = [Qt.Key_D, Qt.Key_S, Qt.Key_W, Qt.Key_A]
-        self.keybeds = [self.keybed1, self.keybed2]
+        self.keybed3 = [Qt.Key_L, Qt.Key_K, Qt.Key_I, Qt.Key_J]
+        self.keybed4 = [Qt.Key_6, Qt.Key_5, Qt.Key_8, Qt.Key_4]
+        self.keybeds = [self.keybed1, self.keybed2, self.keybed3, self.keybed4]
         self.initUI()
         self.gametype = 0
 
@@ -73,14 +75,22 @@ class Boardgame(QGraphicsView):
         self.timer.stop()
 
     def setStartPositions(self):
-        self.obstacles[0].setY(-200)
+        y = random.randint(-self.grafickascena.height(), -100)
+        self.obstacles[0].setY(y)
         self.obstacles[0].setX(170)
-        self.obstacles[1].setY(-200)
+        self.randomPosition(self.obstacles[0])
+        y1 = random.randint(-self.grafickascena.height(), -100)
+        self.obstacles[1].setY(y1)
         self.obstacles[1].setX(500)
-        self.obstacles[2].setY(-600)
+        self.randomPosition(self.obstacles[1])
+        y2 = random.randint(-self.grafickascena.height(), -100)
+        self.obstacles[2].setY(y2)
         self.obstacles[2].setX(400)
-        self.obstacles[3].setY(-600)
+        self.randomPosition(self.obstacles[2])
+        y3 = random.randint(-self.grafickascena.height(), -100)
+        self.obstacles[3].setY(y3)
         self.obstacles[3].setX(720)
+        self.randomPosition(self.obstacles[3])
 
     def restart(self):
         self.setStartPositions() # reset option, resets all the positions and starts the thread again
@@ -255,14 +265,18 @@ class Boardgame(QGraphicsView):
         while (x>(self.previous-100)) & (x<(self.previous+100)):
             x = random.randint(300, 700)
         self.previous = x
-        Ob.setY(-150)
+        Ob.setY(-100)
         Ob.setX(x)
         Ob.setObstaclePix()
-        sansa = random.randint(0, 100)  # simulacija coin toss-a. Ako je sansa 0 sakriti prepreku. Ako je jedan prikazati.
-        #prvih nekoliko prepreka se pojavljuje na pocetku nezavisno od sanse?
+        self.randomPosition(Ob)
+
+    def randomPosition (self, Ob : Obstacle):
+        sansa = random.randint(0,
+                               100)  # simulacija coin toss-a. Ako je sansa 0 sakriti prepreku. Ako je jedan prikazati.
+        # prvih nekoliko prepreka se pojavljuje na pocetku nezavisno od sanse?
 
         if self.level < 7:
-            if sansa > self.level*10:
+            if sansa > self.level * 10:
                 Ob.hide()
             else:
                 Ob.show()
@@ -279,6 +293,12 @@ class Boardgame(QGraphicsView):
         if len(self.players) >= 2:
             if event.key() in self.keybed2:
                 self.players[1].keyPressEvent(event)
+        if len(self.players) >= 3:
+            if event.key() in self.keybed3:
+                self.players[2].keyPressEvent(event)
+        if len(self.players) >= 4:
+            if event.key() in self.keybed4:
+                self.players[3].keyPressEvent(event)
 
     def keyReleaseEvent(self, event) -> None:
         if event.key() in self.keybed1:
@@ -287,6 +307,13 @@ class Boardgame(QGraphicsView):
         if len(self.players) >= 2:
             if event.key() in self.keybed2:
                 self.players[1].keyReleaseEvent(event)
+        if len(self.players) >= 3:
+            if event.key() in self.keybed3:
+                self.players[2].keyReleaseEvent(event)
+        if len(self.players) >= 4:
+            if event.key() in self.keybed4:
+                self.players[3].keyReleaseEvent(event)
+
 
     @pyqtSlot()
     def checkCollision(self):
