@@ -38,6 +38,7 @@ class NumberOfPlayersView(QGraphicsView):
         self.playersLayout1 = QHBoxLayout()
         self.playersLayout2 = QHBoxLayout()
 
+
         self.playersLayout1.addWidget(self.oneplayerbutton)
         self.playersLayout1.addWidget(self.twoplayerbutton)
         self.playersLayout1.setAlignment(Qt.AlignCenter)
