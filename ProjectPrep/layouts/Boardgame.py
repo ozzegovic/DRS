@@ -138,7 +138,7 @@ class Boardgame(QGraphicsView):
             self.player = Player(player, str(players[player]), self.keybeds[self.i], self.grafickascena.width() / 15)
             self.players.append(self.player)
             self.grafickascena.addItem(self.player)
-            self.i = + 1
+            self.i = self.i + 1
         self.restart()
 
         # init hud frame with array of Player objects
