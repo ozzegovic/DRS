@@ -57,23 +57,22 @@ class Player(QGraphicsPixmapItem):
 
     def movePlayer(self, key):
         # if it's not killable, means player died and cannot move
-        if self.killable == True:
-            if key == self.keybed[0]:
-                if self.pos().x() + 15 <= 790:
-                    self.moveBy(15, 0)
-                    self.checkifCollision(key)
-            elif key == self.keybed[1]:
-                if self.pos().y() + 15 <= 530:
-                    self.moveBy(0, 15)
-                    self.checkifCollision(key)
-            elif key == self.keybed[2]:
-                if self.pos().y() - 15 >= 0:
-                    self.moveBy(0, -15)
-                    self.checkifCollision(key)
-            elif key == self.keybed[3]:
-                if self.pos().x() - 15 >= 150:
-                    self.moveBy(-15, 0)
-                    self.checkifCollision(key)
+        if key == self.keybed[0]:
+            if self.pos().x() + 15 <= 790:
+                self.moveBy(15, 0)
+                self.checkifCollision(key)
+        elif key == self.keybed[1]:
+            if self.pos().y() + 15 <= 530:
+                self.moveBy(0, 15)
+                self.checkifCollision(key)
+        elif key == self.keybed[2]:
+            if self.pos().y() - 15 >= 0:
+                self.moveBy(0, -15)
+                self.checkifCollision(key)
+        elif key == self.keybed[3]:
+            if self.pos().x() - 15 >= 150:
+                self.moveBy(-15, 0)
+                self.checkifCollision(key)
 
     def checkifCollision(self, key):
 
