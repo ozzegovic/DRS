@@ -9,6 +9,8 @@ from ProjectPrep.layouts.pauseView import pauseView
 from ProjectPrep.layouts.numberOfPlayers import NumberOfPlayersView
 from ProjectPrep.layouts.WinnerMenu import  WinnerView
 from ProjectPrep.layouts.tournament import TournamentTree
+from ProjectPrep.layouts.ConnectRoom import ConnectRoom
+
 from ProjectPrep.layouts.hostView import HostView
 
 class MainWindow(QMainWindow):
@@ -28,6 +30,7 @@ class MainWindow(QMainWindow):
         self.Winner = WinnerView(self.centralWidget)
         self.host = HostView(self.centralWidget)
 
+        self.connectRoom = ConnectRoom(self.centralWidget)
         self.setGeometry(0, 0, 1000, 850)
 
         self.initUI()
@@ -44,6 +47,7 @@ class MainWindow(QMainWindow):
         self.centralWidget.addWidget(self.Winner) # 6. element view liste
         self.centralWidget.addWidget(self.host) # 7. element view liste
 
+        self.centralWidget.addWidget(self.connectRoom) # 8. element view liste
         self.centralWidget.setCurrentWidget(self.mainmenu)
         self.setWindowTitle('Crazy Cars')
 

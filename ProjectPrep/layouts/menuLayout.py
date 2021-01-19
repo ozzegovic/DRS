@@ -30,6 +30,8 @@ class menuView(QGraphicsView):
         self.tourney2button.clicked.connect(self.tournament2click)
         self.tourney4button = StyleButton('PNG/You_Win/Play_Tournament_2.png', '4 Player tournament', 40, 40)
         self.tourney4button.clicked.connect(self.tournament4click)
+        self.connectroombutton = StyleButton('PNG/Buttons/Play_BTN.png', 'Connect to host', 40, 40)
+        self.connectroombutton.clicked.connect(self.connectRoomButtonClick)
         self.hostbutton = StyleButton('PNG/You_Win/Play_BTN.png', 'Host a game', 40, 40)
         self.hostbutton.clicked.connect(self.hostgame)
         self.exitbtn = StyleButton('PNG/Buttons/Close_BTN.png', 'Exit', 40, 40)
@@ -39,13 +41,15 @@ class menuView(QGraphicsView):
         self.grafickascena.addWidget(self.tourney2button)
         self.grafickascena.addWidget(self.tourney4button)
         self.grafickascena.addWidget(self.hostbutton)
+        self.grafickascena.addWidget(self.connectroombutton)
         self.grafickascena.addWidget(self.exitbtn)
 
         self.playbutton.move(150, 250)
         self.tourney2button.move(150, 300)
         self.tourney4button.move(150, 350)
         self.hostbutton.move(150, 400)
-        self.exitbtn.move(150, 450)
+        self.connectroombutton.move(150, 450)
+        self.exitbtn.move(150, 500)
 
         self.setScene(self.grafickascena)
 
@@ -78,6 +82,9 @@ class menuView(QGraphicsView):
     def gotoSettingsMenu(self):
 
         self.viewlist.setCurrentWidget(self.viewlist.widget(5))
+
+    def connectRoomButtonClick(self):
+        self.viewlist.setCurrentWidget(self.viewlist.widget(8))
 
     def closeThis(self):
         sys.exit()

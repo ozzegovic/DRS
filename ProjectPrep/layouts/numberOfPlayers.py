@@ -79,7 +79,7 @@ class NumberOfPlayersView(QGraphicsView):
         # create widget with 1 car
         self.input = self.viewlist.widget(4)
         self.input.initFrames(1, 0)
-        self.viewlist.setCurrentWidget(self.input) # 4. element view liste (uvek ce InputPlayersView biti na 4. jer se brise kada odemo unazad)
+        self.viewlist.setCurrentWidget(self.input) # 4. element view liste
 
     def twoplayerbuttonclick(self):
         # create widget with 2 cars
