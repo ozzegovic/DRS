@@ -8,9 +8,9 @@ from ProjectPrep.CustomWidgets.CustomButton import StyleButton
 
 class InputOkvir(QGraphicsView):
 
-    def __init__(self, number):
+    def __init__(self, number): # number
         super().__init__()
-        self.playercounter = number + 1  # to avoid 'Player 0' name
+        #self.playercounter = number + 1  # to avoid 'Player 0' name
         self.playerName = ''
         self.Car = 1  # default car choice is 1
         self.graphicsPixmapItemCar = QGraphicsPixmapItem()
@@ -57,7 +57,7 @@ class InputOkvir(QGraphicsView):
 
         self.playerNameEdit = QLineEdit()
         self.playerNameEdit.resize(130, 30)
-        self.playerNameEdit.setText('Player ' + str(self.playercounter))
+        self.playerNameEdit.setText('Enter name') #  + str(self.playercounter)
         self.playerNameEdit.editingFinished.connect(self.onChanged)
         self.playerNameEdit.move(10, 160)
         self.playerNameEdit.setStyleSheet('color: yellow; font-weight: bold; background: transparent;')
