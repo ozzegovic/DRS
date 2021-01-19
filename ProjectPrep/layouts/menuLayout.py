@@ -5,6 +5,7 @@ from PyQt5.QtGui import QPixmap
 from ProjectPrep.layouts.InputPlayersMenu import InputPlayersView
 from ProjectPrep.layouts.SettingsMenu import SettingsView
 from ProjectPrep.CustomWidgets.CustomButton import StyleButton
+from ProjectPrep.layouts.hostView import HostView
 import  sys
 
 
@@ -29,20 +30,28 @@ class menuView(QGraphicsView):
         self.tourney2button.clicked.connect(self.tournament2click)
         self.tourney4button = StyleButton('PNG/You_Win/Play_Tournament_2.png', '4 Player tournament', 40, 40)
         self.tourney4button.clicked.connect(self.tournament4click)
+        self.hostbutton = StyleButton('PNG/You_Win/Play_BTN.png', 'Host a game', 40, 40)
+        self.hostbutton.clicked.connect(self.hostgame)
         self.exitbtn = StyleButton('PNG/Buttons/Close_BTN.png', 'Exit', 40, 40)
         self.exitbtn.clicked.connect(self.closeThis)
 
         self.grafickascena.addWidget(self.playbutton)
         self.grafickascena.addWidget(self.tourney2button)
         self.grafickascena.addWidget(self.tourney4button)
+        self.grafickascena.addWidget(self.hostbutton)
         self.grafickascena.addWidget(self.exitbtn)
 
         self.playbutton.move(150, 250)
         self.tourney2button.move(150, 300)
         self.tourney4button.move(150, 350)
-        self.exitbtn.move(150, 400)
+        self.hostbutton.move(150, 400)
+        self.exitbtn.move(150, 450)
 
         self.setScene(self.grafickascena)
+
+    def hostgame(self):
+        self.hostview = self.viewlist.widget(7)
+        self.viewlist.setCurrentWidget(self.hostview)
 
     def tournament2click(self):
         self.turnir = self.viewlist.widget(4)
