@@ -8,7 +8,6 @@ from PyQt5 import QtCore
 from ProjectPrep.CustomWidgets.HUD import HUD
 from ProjectPrep.CustomWidgets.player import Player
 from ProjectPrep.layouts.InputPlayersMenu import InputPlayersView
-from ProjectPrep.layouts.SettingsMenu import SettingsView
 from ProjectPrep.CustomWidgets.CustomButton import StyleButton
 from ProjectPrep.layouts.boardNotifier import Worker
 from ProjectPrep.layouts.pauseView import pauseView

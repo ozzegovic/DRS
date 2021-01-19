@@ -6,7 +6,7 @@ from PyQt5.QtGui import QPixmap
 from ProjectPrep.CustomWidgets.HUDOkvir import HUDOkvir
 from ProjectPrep.CustomWidgets.InputOkvir import InputOkvir
 from ProjectPrep.CustomWidgets.CustomButton import StyleButton
-
+from ProjectPrep.networking.HostClass import NetworkHost
 
 class HostView(QGraphicsView):
 
@@ -33,17 +33,13 @@ class HostView(QGraphicsView):
         self.hostLayout = QHBoxLayout()
         self.guestsLayout = QHBoxLayout()
         self.buttonsLayout = QHBoxLayout()
-        self.choosemenuLayout = QHBoxLayout()
 
         self.playbutton = StyleButton('PNG/Buttons/Play_BTN.png', 'Play', 40, 40)
-        self.playbutton.clicked.connect(self.drawBoard)
-        self.choosebutton = StyleButton('PNG/Buttons/Sound_BTN.png', 'Choose Game Type', 40, 40)
-        self.choosebutton.clicked.connect(self.chooseType)
+        self.playbutton.clicked.connect(self.startgame)
         self.backbutton = StyleButton('PNG/Buttons/Close_BTN.png', 'Back', 40, 40)
         self.backbutton.clicked.connect(self.backbuttonClick)
 
         self.buttonsLayout.addWidget(self.playbutton)
-        self.buttonsLayout.addWidget(self.choosebutton)
         self.buttonsLayout.addWidget(self.backbutton)
         self.buttonsLayout.setAlignment(Qt.AlignCenter)
 
@@ -58,7 +54,6 @@ class HostView(QGraphicsView):
         self.holder.addLayout(self.hostLayout)
         self.holder.addLayout(self.guestsLayout)
         self.holder.addLayout(self.buttonsLayout)
-        self.holder.addLayout(self.choosemenuLayout)
 
         self.setLayout(self.holder)
 
@@ -66,6 +61,7 @@ class HostView(QGraphicsView):
         #self.addHudOkvir("fgfer", "2")
         #self.chooseType()
 
+    # Connect this.
     def addHudOkvir(self, name, car):  # kada se igrac konektuje poziva ovo
         # index = len(self.players)
         # self.newPlayerFrame = HUDOkvir(name, car)
@@ -83,33 +79,14 @@ class HostView(QGraphicsView):
 
         self.players[name] = car #ubacuje se u grupu igraca
 
+    def startServerHosting(self):
 
-    def drawBoard(self):
-        #provera imena hosta
-        #pokretanje igre u zavisnosti od moda
-        self.addHudOkvir("fgfer", "2")
+        self.host = NetworkHost()
+        self.host.starthost()
 
-
-    def chooseType(self):
-        #'PNG/You_Win/Play_Tournament_1.png'
-        self.buttonNormal = StyleButton('PNG/Buttons/Play_BTN.png', 'Normal Game', 40, 40)
-        self.button1v1 = StyleButton('PNG/You_Win/Play_Tournament_1.png', '1v1 Tourney', 40, 40)
-        self.button4man = StyleButton('PNG/You_Win/Play_Tournament_2.png', '4 Player Tourney', 40, 40)
-
-        self.buttonNormal.clicked.connect(lambda: self.setGameType(0))
-        self.button1v1.clicked.connect(lambda: self.setGameType(1))
-        self.button4man.clicked.connect(lambda: self.setGameType(2))
-
-        self.choosemenuLayout.addWidget(self.buttonNormal)
-        self.choosemenuLayout.addWidget(self.button1v1)
-        self.choosemenuLayout.addWidget(self.button4man)
-
-
-    def setGameType(self, type):
-        self.gamemode = type
-        self.buttonNormal.hide()
-        self.button4man.hide()
-        self.button1v1.hide()
+    # Connect this.
+    def setGameDictionary(self, dict):
+        pass # emit to here, and start boardgame with dict.
 
     def setbackground(self):
         tempImg = QPixmap('PNG/9c49087c09fd07a10ae3887a7825f389.jpg')
@@ -117,6 +94,9 @@ class HostView(QGraphicsView):
 
         self.graphicsPixmapItem = QGraphicsPixmapItem(tempImg)
         self.grafickascena.addItem(self.graphicsPixmapItem)
+
+    def startgame(self):
+        pass # pozvati broadcast dictionary.
 
     def backbuttonClick(self):
         # self.closeConnection()

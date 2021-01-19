@@ -1,10 +1,10 @@
 from PyQt5.QtWidgets import QGraphicsView, QGraphicsScene, QVBoxLayout, QHBoxLayout
 from PyQt5.QtWidgets import QGraphicsPixmapItem, QStackedWidget, QLabel
-from PyQt5.QtCore import Qt, QPoint
+from PyQt5.QtCore import Qt, QPoint, pyqtSlot
 from PyQt5.QtGui import QPixmap, QPainter
 from ProjectPrep.CustomWidgets.CustomButton import StyleButton
 from ProjectPrep.CustomWidgets.InputOkvir import InputOkvir
-
+from ProjectPrep.networking.ClientClass import NetworkClientCode
 
 class ConnectRoom(QGraphicsView):
 
@@ -54,6 +54,10 @@ class ConnectRoom(QGraphicsView):
         self.setLayout(self.holder)
         self.setScene(self.grafickascena)
 
+    @pyqtSlot(dict)
+    def setGameDictionary(self, players):
+        pass # emit to dict to this.
+
     def setbackground(self):
         tempImg = QPixmap('PNG/9c49087c09fd07a10ae3887a7825f389.jpg')
         tempImg = tempImg.scaled(self.grafickascena.width(), self.grafickascena.height())
@@ -72,4 +76,6 @@ class ConnectRoom(QGraphicsView):
         self.viewlist.setCurrentWidget(self.viewlist.widget(0))
 
     def play(self):
-        pass
+        self.client = NetworkClientCode()
+        self.client.setnameandCar(self.inputFrame.playerName, self.inputFrame.Car)
+        # todo

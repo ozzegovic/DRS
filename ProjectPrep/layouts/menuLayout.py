@@ -3,9 +3,7 @@ from PyQt5.QtWidgets import QGraphicsPixmapItem, QStackedWidget, QStackedLayout,
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap
 from ProjectPrep.layouts.InputPlayersMenu import InputPlayersView
-from ProjectPrep.layouts.SettingsMenu import SettingsView
 from ProjectPrep.CustomWidgets.CustomButton import StyleButton
-from ProjectPrep.layouts.hostView import HostView
 import  sys
 
 
@@ -54,7 +52,8 @@ class menuView(QGraphicsView):
         self.setScene(self.grafickascena)
 
     def hostgame(self):
-        self.hostview = self.viewlist.widget(7)
+        self.hostview = self.viewlist.widget(1)
+        self.hostview.startServerHosting()
         self.viewlist.setCurrentWidget(self.hostview)
 
     def tournament2click(self):
@@ -79,12 +78,8 @@ class menuView(QGraphicsView):
 
         self.viewlist.setCurrentWidget(self.viewlist.widget(3))
 
-    def gotoSettingsMenu(self):
-
-        self.viewlist.setCurrentWidget(self.viewlist.widget(5))
-
     def connectRoomButtonClick(self):
-        self.viewlist.setCurrentWidget(self.viewlist.widget(8))
+        self.viewlist.setCurrentWidget(self.viewlist.widget(7))
 
     def closeThis(self):
         sys.exit()
