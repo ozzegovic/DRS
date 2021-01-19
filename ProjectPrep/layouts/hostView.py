@@ -15,7 +15,7 @@ class HostView(QGraphicsView):
 
         self.grafickascena = QGraphicsScene()
         self.viewlist = centralWidget
-        #self.guestFrames = [HUDOkvir("", ""), HUDOkvir("", ""), HUDOkvir("", "")]  # array of HUDOkvir, get inputs from previous view
+        self.guestFrames = [HUDOkvir("", ""), HUDOkvir("", ""), HUDOkvir("", "")]  # array of HUDOkvir, get inputs from previous view
         self.gamemode = 0
         self.players = {}
         self.initUI()
@@ -50,6 +50,8 @@ class HostView(QGraphicsView):
         self.hostFrame = InputOkvir(0)
         self.hostLayout.addWidget(self.hostFrame)
 
+        for i in range(0, len(self.guestFrames)):
+            self.guestsLayout.addWidget(self.guestFrames[i])
 
 
         self.holder.addWidget(self.titleLabel)
@@ -65,24 +67,31 @@ class HostView(QGraphicsView):
         #self.chooseType()
 
     def addHudOkvir(self, name, car):  # kada se igrac konektuje poziva ovo
-        self.newPlayerOkvir = HUDOkvir(name, car)
-        self.guestsLayout.addWidget(self.newPlayerOkvir)
+        # index = len(self.players)
+        # self.newPlayerFrame = HUDOkvir(name, car)
+        # self.guestFrames.append(self.newPlayerFrame)
+        #
+        # index = self.guestFrames.index(self.newPlayerFrame)
+        # self.guestsLayout.addWidget(self.guestFrames[index])
+
+        if len(self.players) == 0:
+            self.guestFrames[0].setNameAndCar(name, car)
+        if len(self.players) == 1:
+            self.guestFrames[1].setNameAndCar(name, car)
+        if len(self.players) == 2:
+            self.guestFrames[2].setNameAndCar(name, car)
+
         self.players[name] = car #ubacuje se u grupu igraca
 
 
     def drawBoard(self):
         #provera imena hosta
         #pokretanje igre u zavisnosti od moda
-        pass
+        self.addHudOkvir("fgfer", "2")
+
 
     def chooseType(self):
-        # self.pauseview = pauseView(self.viewlist, self.grafickascena.width() / 4, self.grafickascena.height() / 4)
-        # self.pauseview.move(self.grafickascena.width() / 3, self.grafickascena.height() / 3)
-        # self.choosebutton.worker.killThread = True
-        # self.choosebutton.setEnabled(False)
-        # self.grafickascena.addWidget(self.pauseview)
-        # self.pauseview.show()
-        #self.stopThreads() 'PNG/You_Win/Play_Tournament_1.png'
+        #'PNG/You_Win/Play_Tournament_1.png'
         self.buttonNormal = StyleButton('PNG/Buttons/Play_BTN.png', 'Normal Game', 40, 40)
         self.button1v1 = StyleButton('PNG/You_Win/Play_Tournament_1.png', '1v1 Tourney', 40, 40)
         self.button4man = StyleButton('PNG/You_Win/Play_Tournament_2.png', '4 Player Tourney', 40, 40)
@@ -94,7 +103,7 @@ class HostView(QGraphicsView):
         self.choosemenuLayout.addWidget(self.buttonNormal)
         self.choosemenuLayout.addWidget(self.button1v1)
         self.choosemenuLayout.addWidget(self.button4man)
-        pass
+
 
     def setGameType(self, type):
         self.gamemode = type
@@ -111,9 +120,13 @@ class HostView(QGraphicsView):
 
     def backbuttonClick(self):
         # self.closeConnection()
+        # for i in range(0, len(self.guestFrames)):
+        #     self.guestFrames[i].deleteLater()
+
         self.resetPlayers()
         self.viewlist.setCurrentWidget(self.viewlist.widget(0))
 
     def resetPlayers(self):
         self.players = {}
-        #self.guestFrames = []
+        for i in range(0, 3):
+            self.guestFrames[i].setNameAndCar("", "")
