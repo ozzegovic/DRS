@@ -107,9 +107,9 @@ class HostView(QGraphicsView):
 
     def setGameType(self, type):
         self.gamemode = type
-        self.buttonNormal.deleteLater()
-        self.button4man.deleteLater()
-        self.button1v1.deleteLater()
+        self.buttonNormal.hide()
+        self.button4man.hide()
+        self.button1v1.hide()
 
     def setbackground(self):
         tempImg = QPixmap('PNG/9c49087c09fd07a10ae3887a7825f389.jpg')
