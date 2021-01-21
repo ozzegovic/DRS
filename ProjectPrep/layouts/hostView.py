@@ -1,12 +1,13 @@
 from PyQt5.QtWidgets import QGraphicsView, QGraphicsScene, QVBoxLayout, QHBoxLayout
 from PyQt5.QtWidgets import QGraphicsPixmapItem, QStackedWidget, QLabel
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, pyqtSlot
 from PyQt5.QtGui import QPixmap
 
 from ProjectPrep.CustomWidgets.HUDOkvir import HUDOkvir
 from ProjectPrep.CustomWidgets.InputOkvir import InputOkvir
 from ProjectPrep.CustomWidgets.CustomButton import StyleButton
 from ProjectPrep.networking.HostClass import NetworkHost
+
 
 class HostView(QGraphicsView):
 
@@ -58,10 +59,12 @@ class HostView(QGraphicsView):
         self.setLayout(self.holder)
 
         self.setScene(self.grafickascena)
+
+
         #self.addHudOkvir("fgfer", "2")
         #self.chooseType()
 
-    # Connect this.
+    @pyqtSlot(str, str)
     def addHudOkvir(self, name, car):  # kada se igrac konektuje poziva ovo
         # index = len(self.players)
         # self.newPlayerFrame = HUDOkvir(name, car)
@@ -82,11 +85,15 @@ class HostView(QGraphicsView):
     def startServerHosting(self):
 
         self.host = NetworkHost()
+        self.host.addPlayerFrameSignal.connect(self.addHudOkvir)
         self.host.starthost()
 
     # Connect this.
     def setGameDictionary(self, dict):
-        pass # emit to here, and start boardgame with dict.
+        self.host.broadcastdictionary(dict)
+        self.boardgame = self.viewlist.widget(2)
+        self.boardgame.initPlayers(self.players, 3)
+        self.viewlist.setCurrentWidget(self.boardgame)
 
     def setbackground(self):
         tempImg = QPixmap('PNG/9c49087c09fd07a10ae3887a7825f389.jpg')
@@ -96,7 +103,9 @@ class HostView(QGraphicsView):
         self.grafickascena.addItem(self.graphicsPixmapItem)
 
     def startgame(self):
-        pass # pozvati broadcast dictionary.
+        if self.hostFrame.playerName != '':
+            self.players[self.hostFrame.playerName] = self.hostFrame.Car
+            self.setGameDictionary(self.players)
 
     def backbuttonClick(self):
         # self.closeConnection()

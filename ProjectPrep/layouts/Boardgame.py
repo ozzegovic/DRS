@@ -74,22 +74,8 @@ class Boardgame(QGraphicsView):
         self.timer.stop()
 
     def setStartPositions(self):
-        y = random.randint(-self.grafickascena.height(), -100)
-        self.obstacles[0].setY(y)
-        self.obstacles[0].setX(170)
-        self.randomPosition(self.obstacles[0])
-        y1 = random.randint(-self.grafickascena.height(), -100)
-        self.obstacles[1].setY(y1)
-        self.obstacles[1].setX(500)
-        self.randomPosition(self.obstacles[1])
-        y2 = random.randint(-self.grafickascena.height(), -100)
-        self.obstacles[2].setY(y2)
-        self.obstacles[2].setX(400)
-        self.randomPosition(self.obstacles[2])
-        y3 = random.randint(-self.grafickascena.height(), -100)
-        self.obstacles[3].setY(y3)
-        self.obstacles[3].setX(720)
-        self.randomPosition(self.obstacles[3])
+        for obsticale in self.obstacles:
+            self.createObstacle(obsticale)
 
     def restart(self):
         self.setStartPositions() # reset option, resets all the positions and starts the thread again
@@ -261,17 +247,15 @@ class Boardgame(QGraphicsView):
     def createObstacle(self, Ob : Obstacle):
 
         x = random.randint(170, 720)
-        while (x>(self.previous-100)) & (x<(self.previous+100)):
-            x = random.randint(300, 700)
-        self.previous = x
-        Ob.setY(-100)
+        y = random.randint(-self.grafickascena.height(), - 100)
+
+        #while (x>(self.previous-100)) & (x<(self.previous+100)):
+        ##    x = random.randint(300, 700)
+        #self.previous = x
+        Ob.setY(y)
         Ob.setX(x)
         Ob.setObstaclePix()
-        self.randomPosition(Ob)
-
-    def randomPosition (self, Ob : Obstacle):
-        sansa = random.randint(0,
-                               100)  # simulacija coin toss-a. Ako je sansa 0 sakriti prepreku. Ako je jedan prikazati.
+        sansa = random.randint(0,100)  # simulacija coin toss-a. Ako je sansa 0 sakriti prepreku. Ako je jedan prikazati.
         # prvih nekoliko prepreka se pojavljuje na pocetku nezavisno od sanse?
 
         if self.level < 7:

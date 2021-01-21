@@ -1,8 +1,9 @@
 import socket
+import threading
 import time, json
 from threading import Thread
 from PyQt5.QtCore import QThread, QObject, pyqtSlot, pyqtSignal
-import re
+from ProjectPrep.layouts.boardNotifier import Worker
 
 class NetworkClientCode(QObject):
 
@@ -26,9 +27,20 @@ class NetworkClientCode(QObject):
             self.ClientSocket.connect((self.host, self.port))
         except socket.error as e:
             print(str(e))
-        #start thread to send sign up message
 
+
+        #start thread to send sign up message
     def sendSignUpMessage(self):
         self.ClientSocket.send(str.encode('s,' + str(self.name) + ',' + str(self.car))) # salje se prijava korisnika.
-        #cekati na prijem dictionary sa servera.
+        print("Poslato")
+        clientThread = threading.Thread(target=self.serverResponce, args=(self.ClientSocket,))
+        clientThread.start()
+
         # nakon prijema emitovati signal metodi Client viewa da zapocne igru s tim recnikom.
+
+    def serverResponce(self,connection):
+        print("LISTENING")
+        data = connection.recv(1000)
+        message : str = data.decode('utf-8')
+        dict = json.loads(message)
+        self.signal.emit(dict)

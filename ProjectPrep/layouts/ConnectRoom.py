@@ -56,7 +56,10 @@ class ConnectRoom(QGraphicsView):
 
     @pyqtSlot(dict)
     def setGameDictionary(self, players):
-        pass # emit to dict to this.
+        pass
+        self.boardgame = self.viewlist.widget(2)
+        self.boardgame.initPlayers(players, 3)
+        self.viewlist.setCurrentWidget(self.boardgame)
 
     def setbackground(self):
         tempImg = QPixmap('PNG/9c49087c09fd07a10ae3887a7825f389.jpg')
@@ -77,5 +80,6 @@ class ConnectRoom(QGraphicsView):
 
     def play(self):
         self.client = NetworkClientCode()
+        self.client.signal.connect(self.setGameDictionary)
         self.client.setnameandCar(self.inputFrame.playerName, self.inputFrame.Car)
-        # todo
+        self.client.sendSignUpMessage()

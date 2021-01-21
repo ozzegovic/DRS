@@ -10,7 +10,7 @@ import re
 class NetworkHost(QObject):
 
     signal = pyqtSignal(dict) # konektovati gde treba
-    addPlayerFrameSignal = pyqtSignal(str, int)
+    addPlayerFrameSignal = pyqtSignal(str, str)
 
     def __init__(self):
         super().__init__()
@@ -21,6 +21,9 @@ class NetworkHost(QObject):
         self.name = ''
         self.car = 1
         self.ThreadCount = 0
+        self.message = ""
+        self.dict = []
+        self.Clients = []
 
     def starthost(self):
 
@@ -41,24 +44,30 @@ class NetworkHost(QObject):
             #reply = 'Server Says: ' + data.decode('utf-8')
             message : str = data.decode('utf-8')
             if message.startswith('s'):
-                pass # obraditi poruku.
+                messageSplit = message.split(',')
+                self.addPlayerFrameSignal.emit(messageSplit[1], messageSplit[2])
+                print(messageSplit[1])
         print('closed')
         connection.close()
 
-    def broadcastdictionary(self):
-        pass # TODO
+    def broadcastdictionary(self, dict):
+        print("send to clients")
+        jsondict = json.dumps(dict)
+        for client in self.Clients:
+            client.send(str.encode(jsondict))
 
     def startlistenloop(self):
 
         while self.listenKill == False: # kill me when you should.
             try:
                 Client, address = self.ServerSocket.accept()
+                self.Clients.append(Client)
                 print('Connected to: ' + address[0] + ':' + str(address[1]))
                 Client.setblocking(1)
                 clientThread = threading.Thread(target=self.startrecv, args=(Client, ))
                 clientThread.start()
             except:
-                print('here')
+                #print('here')
                 pass
             time.sleep(5)
         self.ServerSocket.close()
