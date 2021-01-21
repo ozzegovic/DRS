@@ -105,6 +105,8 @@ class HostView(QGraphicsView):
     def startgame(self):
         if self.hostFrame.playerName != '':
             self.players[self.hostFrame.playerName] = self.hostFrame.Car
+            self.host.name = self.hostFrame.playerName
+            self.host.car = self.hostFrame.Car
             self.setGameDictionary(self.players)
 
     def backbuttonClick(self):
