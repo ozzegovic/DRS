@@ -8,6 +8,8 @@ from ProjectPrep.layouts.boardNotifier import Worker
 class NetworkClientCode(QObject):
 
     signal = pyqtSignal(dict) # konektovati gde treba
+    updateobstacles = pyqtSignal(int, int, int, int, bool)
+    updateposition = pyqtSignal(str, float, float, int)
 
     def __init__(self):
         super().__init__()
@@ -44,3 +46,16 @@ class NetworkClientCode(QObject):
         message : str = data.decode('utf-8')
         dict = json.loads(message)
         self.signal.emit(dict)
+
+        while True:
+            message = self.ClientSocket.recv(200).decode('utf-8')
+            if message.startswith('m'):
+                pass # TODO
+            elif message.startswith('o'):
+                pass # TODO
+            elif message.startswith('e'):
+                pass
+        self.ClientSocket.close()
+
+    def sendplayerPosition(self, x, y, keyindex):
+        self.ClientSocket.send(str.encode('m,' + self.name + ',' + str(x) + ',' + str(y) + ',' + str(keyindex)))

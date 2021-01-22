@@ -33,6 +33,7 @@ class Boardgame(QGraphicsView):
         self.keybeds = [self.keybed1, self.keybed2, self.keybed3, self.keybed4]
         self.initUI()
         self.gametype = 0
+        self.networkcode = None
 
         #timer
         self.level = 1
@@ -115,12 +116,18 @@ class Boardgame(QGraphicsView):
             player.activateThreads()
 
     # add players to the boardgame
-    def initPlayers(self, players, gametype):
+    def initPlayers(self, players, gametype, networkCode=None):
         self.players.clear()
+        self.networkcode = networkCode
+
         self.i = 0
         for player in players:
             # players dictionary: key(player) - playerName, value(players[player]) - playerCar
-            self.player = Player(player, str(players[player]), self.keybeds[self.i], self.grafickascena.width() / 15)
+            if gametype != 3:
+                self.player = Player(player, str(players[player]), self.keybeds[self.i], self.grafickascena.width() / 15)
+            else:
+                self.player = Player(player, str(players[player]), self.keybeds[0], self.grafickascena.width() / 15)
+            self.player.setNetworkCode(self.networkcode)
             self.players.append(self.player)
             self.grafickascena.addItem(self.player)
             self.i = self.i + 1
@@ -269,6 +276,14 @@ class Boardgame(QGraphicsView):
             else:
                 Ob.show()
 
+    @pyqtSlot(int, int, int, int, bool)
+    def networkSetObstacles(self, index, x, y, type, visible):
+        pass # TODO
+
+    @pyqtSlot(str, float, float, int)
+    def networkPlayerPosition(self, name, x, y, keyindex):
+        pass # TODO
+
     def keyPressEvent(self, event) -> None:
         if event.key() in self.keybed1:
             self.players[0].keyPressEvent(event)
@@ -296,7 +311,6 @@ class Boardgame(QGraphicsView):
         if len(self.players) >= 4:
             if event.key() in self.keybed4:
                 self.players[3].keyReleaseEvent(event)
-
 
     @pyqtSlot()
     def checkCollision(self):

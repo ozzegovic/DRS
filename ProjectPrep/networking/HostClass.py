@@ -11,6 +11,7 @@ class NetworkHost(QObject):
 
     signal = pyqtSignal(dict) # konektovati gde treba
     addPlayerFrameSignal = pyqtSignal(str, str)
+    updateposition = pyqtSignal(str, float, float, int)
 
     def __init__(self):
         super().__init__()
@@ -47,6 +48,10 @@ class NetworkHost(QObject):
                 messageSplit = message.split(',')
                 self.addPlayerFrameSignal.emit(messageSplit[1], messageSplit[2])
                 print(messageSplit[1])
+            elif message.startswith('m'):
+                pass # TODO obraditi dobijen move.
+            elif message.startswith('e'):
+                break
         print('closed')
         connection.close()
 
@@ -56,14 +61,29 @@ class NetworkHost(QObject):
         for client in self.Clients:
             client.send(str.encode(jsondict))
 
+    def broadcastObstacles(self, index, x, y, pic, visible):
+        pass # TODO
+        # Ovom metodom poslati upakovan string broadcast klijentima o prepreci.
+
+    def broadcastMovement(self, player, x, y, keyindex):
+        pass # TODO
+        # Ovde prvo emitovati kod sebe player poziciju, a zatim i broadcastovati klijentima.
+        # Ovo je pomeraj klijenta, koji se broadcastoju ostalim klijentima.
+        # Poziva se iz startrecva.
+
+    def broadcastServerMoveToClients(self, player, x, y, keyindex):
+        pass # TODO
+        # Ovde broadcastovati samo klijentima ne emitovati kod sebe, jer je
+        # ovo samo pomeraj koji host pravi.
+
     def startlistenloop(self):
 
         while self.listenKill == False: # kill me when you should.
             try:
                 Client, address = self.ServerSocket.accept()
-                self.Clients.append(Client)
                 print('Connected to: ' + address[0] + ':' + str(address[1]))
                 Client.setblocking(1)
+                self.Clients.append(Client)
                 clientThread = threading.Thread(target=self.startrecv, args=(Client, ))
                 clientThread.start()
             except:

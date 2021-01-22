@@ -58,7 +58,7 @@ class ConnectRoom(QGraphicsView):
     def setGameDictionary(self, players):
         pass
         self.boardgame = self.viewlist.widget(2)
-        self.boardgame.initPlayers(players, 3)
+        self.boardgame.initPlayers(players, 3, self.client)
         self.viewlist.setCurrentWidget(self.boardgame)
 
     def setbackground(self):

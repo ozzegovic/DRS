@@ -35,6 +35,7 @@ class Player(QGraphicsPixmapItem):
         self.notMoving.timeout.connect(self.enableMoving)
         self.canMove = True
         self.notMovingRemaining = 0
+        self.networkcode = None
 
     def die(self):
         if self.killable == True:
@@ -46,6 +47,7 @@ class Player(QGraphicsPixmapItem):
                 self.killable = False  # died three times already, no need to count lives anymore
             else:
                 self.makeUnkillable() # calls timer
+
     def getLives(self):
         return self.lives
 
@@ -54,6 +56,9 @@ class Player(QGraphicsPixmapItem):
 
     def keyReleaseEvent(self, event):
         self.key_notifier.rem_key(event.key())
+
+    def setNetworkCode(self, networkCode):
+        self.networkcode = networkCode
 
     def movePlayer(self, key):
         # if it's not killable, means player died and cannot move
@@ -73,6 +78,8 @@ class Player(QGraphicsPixmapItem):
             if self.pos().x() - 15 >= 150:
                 self.moveBy(-15, 0)
                 self.checkifCollision(key)
+
+        # TODO send position to host.
 
     def checkifCollision(self, key):
 

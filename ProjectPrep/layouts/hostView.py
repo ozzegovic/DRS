@@ -92,7 +92,7 @@ class HostView(QGraphicsView):
     def setGameDictionary(self, dict):
         self.host.broadcastdictionary(dict)
         self.boardgame = self.viewlist.widget(2)
-        self.boardgame.initPlayers(self.players, 3)
+        self.boardgame.initPlayers(self.players, 3, self.host)
         self.viewlist.setCurrentWidget(self.boardgame)
 
     def setbackground(self):
