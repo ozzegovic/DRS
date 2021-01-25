@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QApplication, QGraphicsView, QGraphicsScene, QVBoxLayout, QHBoxLayout
+from PyQt5.QtWidgets import QApplication, QGraphicsView, QGraphicsScene, QVBoxLayout, QHBoxLayout, QFrame
 from PyQt5.QtWidgets import QGraphicsPixmapItem, QStackedWidget, QPushButton, QLabel
 from PyQt5.QtCore import Qt, QPoint
 from PyQt5.QtGui import QPixmap, QPainter
@@ -98,14 +98,12 @@ class InputPlayersView(QGraphicsView):
                     self.players[self.playerFrames[i].playerName] = self.playerFrames[i].Car
                 else:
                     # key already exists
-                    self.validated = False
+                    self.setInfoLabelText(1)
             else:
-                self.validated = False
+                self.setInfoLabelText(2)
 
-        if self.validated == False:
-            self.infoLabel.setText('All players must have a unique name.')
-            self.infoLabel.adjustSize()
-        else:
+        if self.validated:
+            self.setInfoLabelText(0) # if there was a validation error that is not fixed, delete text from info label
             if self.gametype == 0 or self.gametype == 1: #1v1
 
                 self.boardgame = self.viewlist.widget(2)
@@ -122,7 +120,29 @@ class InputPlayersView(QGraphicsView):
                 self.viewlist.setCurrentWidget(self.viewlist.widget(5))
                 self.resetPlayers()
 
+    def setInfoLabelText(self, error):
+        if error == 0:
+            self.validated = True
+            self.infoLabel.setText("")
+            self.infoLabel.adjustSize()
+        elif error == 1:
+            self.resetPlayers()  # reset recnika mora jer se na play proveravaju SVI okviri, cak i oni koji su bili okej - ako je nesto ostalo sto je valjalo sledeci put ne bi proslo
+            self.validated = False
+            self.infoLabel.setText('All players must have a unique name.')
+            self.infoLabel.adjustSize()
+        elif error == 2:
+            self.resetPlayers()
+            self.validated = False
+            self.infoLabel.setText('All players must enter a name.')
+            self.infoLabel.adjustSize()
+
     def backbuttonClick(self):
+        # if there was an error
+        # need to reset players dictionary
+        # npr prvi put ime 'player' ce proci i bice ubacen u recnik, sledeci sa istim imenom nece i pojavice se greska u infolabeli
+        # ako se ode iz ovog pogleda nazad - bez reseta recnik bi ostao popunjen sa igracima koji su prosli validaciju
+        self.setInfoLabelText(0)
+        self.resetPlayers()
         # back to input number of players
         if self.gametype == 0:
             self.viewlist.setCurrentWidget(self.viewlist.widget(3))
