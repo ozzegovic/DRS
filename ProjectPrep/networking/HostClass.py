@@ -62,8 +62,10 @@ class NetworkHost(QObject):
             client.send(str.encode(jsondict))
 
     def broadcastObstacles(self, index, x, y, pic, visible):
-        pass # TODO
         # Ovom metodom poslati upakovan string broadcast klijentima o prepreci.
+        message = str.encode('o,' + str(index) + ',' + str(x) + ',' + str(y) + ',' + str(pic) + ',' + str(visible))
+        for client in self.Clients:
+            client.send(message)
 
     def broadcastMovement(self, player, x, y, keyindex):
         pass # TODO

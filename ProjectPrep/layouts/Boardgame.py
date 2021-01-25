@@ -253,6 +253,9 @@ class Boardgame(QGraphicsView):
 
     def createObstacle(self, Ob : Obstacle):
 
+        if self.gametype == 3 and self.networkcode.id == False:
+            return
+
         x = random.randint(170, 720)
         y = random.randint(-self.grafickascena.height(), - 100)
 
@@ -265,20 +268,35 @@ class Boardgame(QGraphicsView):
         sansa = random.randint(0,100)  # simulacija coin toss-a. Ako je sansa 0 sakriti prepreku. Ako je jedan prikazati.
         # prvih nekoliko prepreka se pojavljuje na pocetku nezavisno od sanse?
 
+        visible = False
+
         if self.level < 7:
             if sansa > self.level * 10:
                 Ob.hide()
+                visible = False
             else:
                 Ob.show()
+                visible = True
         else:
             if sansa > 70:
                 Ob.hide()
+                visible = False
             else:
                 Ob.show()
+                visible = True
+
+        if self.gametype == 3 and self.networkcode.id == True:
+            self.networkcode.broadcastObstacles(self.obstacles.index(Ob), x, y, Ob.getPixType(), visible)
 
     @pyqtSlot(int, int, int, int, bool)
     def networkSetObstacles(self, index, x, y, type, visible):
-        pass # TODO
+        obstacle = self.obstacles[index]
+        obstacle.setPos(x, y)
+        obstacle.setObstaclePixNum(type)
+        if visible:
+            obstacle.show()
+        else:
+            obstacle.hide()
 
     @pyqtSlot(str, float, float, int)
     def networkPlayerPosition(self, name, x, y, keyindex):
