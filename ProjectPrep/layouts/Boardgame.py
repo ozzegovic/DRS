@@ -133,6 +133,10 @@ class Boardgame(QGraphicsView):
             self.i = self.i + 1
         self.restart()
 
+        if self.gametype == 3:
+            for ob in self.obstacles:
+                ob.hide()
+                
         # init hud frame with array of Player objects
         self.hud.initHudFrames(self.players)
         if gametype == 1:# 1v1 turnir
