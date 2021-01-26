@@ -162,6 +162,7 @@ class Player(QGraphicsPixmapItem):
         self.effect.setEnabled(False)
         self.safeTimer.stop()
         self.killable = True
+        self.key_notifier.start()
 
     def addLife(self):
         if self.lives < 4:  # lives limited to 4
@@ -176,8 +177,9 @@ class Player(QGraphicsPixmapItem):
         self.notMoving.start(2000)
 
     def enableMoving(self):
-        self.effect.setEnabled(False)
-        self.effect.setColor(QColor(189, 189, 189))
+        if self.killable:
+            self.effect.setEnabled(False)
+            self.effect.setColor(QColor(189, 189, 189))
 
         self.notMoving.stop()
         self.canMove = True
