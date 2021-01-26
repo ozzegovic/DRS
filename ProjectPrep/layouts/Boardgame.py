@@ -73,6 +73,8 @@ class Boardgame(QGraphicsView):
         self.collisionNotifier.stop()
         self.stopPlayerThreads()    # for each player stop key notifier thread
         self.timer.stop()
+        if self.gametype == 3 and self.networkcode.id:
+            self.networkcode.stopNetworkThreads()
 
     def setStartPositions(self):
         for obsticale in self.obstacles:
@@ -134,9 +136,12 @@ class Boardgame(QGraphicsView):
             self.i = self.i + 1
         self.restart()
 
-        if self.gametype == 3:
+        if gametype == 3:
             for ob in self.obstacles:
                 ob.hide()
+            self.pauseButton.hide()
+        else:
+            self.pauseButton.show()
                 
         # init hud frame with array of Player objects
         self.hud.initHudFrames(self.players)

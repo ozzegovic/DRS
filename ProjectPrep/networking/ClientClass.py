@@ -58,7 +58,8 @@ class NetworkClientCode(QObject):
             elif message.startswith('o'):
                 self.parseObstacleMessage(message)
             elif message.startswith('e'):
-                pass
+                self.ClientSocket.send(str.encode('e'))
+                break
         self.ClientSocket.close()
 
     def sendplayerPosition(self, name, x, y, keyindex):

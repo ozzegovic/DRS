@@ -66,6 +66,8 @@ class NetworkHost(QObject):
         for client in self.Clients:
             client.send(str.encode(jsondict))
 
+        self.listenKill = True
+
     def broadcastObstacles(self, index, x, y, pic, visible):
         # Ovom metodom poslati upakovan string broadcast klijentima o prepreci.
         message = str.encode('o,' + str(index) + ',' + str(x) + ',' + str(y) + ',' + str(pic) + ',' + str(visible))
@@ -100,3 +102,7 @@ class NetworkHost(QObject):
                 pass
             time.sleep(5)
         self.ServerSocket.close()
+
+    def stopNetworkThreads(self):
+        for client in self.connectionlist:
+            client.send(str.encode('e'))
