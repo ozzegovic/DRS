@@ -85,10 +85,11 @@ class Player(QGraphicsPixmapItem):
                 index = 3
 
         # TODO send position to host.
-        if isinstance(self.networkcode, NetworkClientCode):
-            self.networkcode.sendplayerPosition(self.playerName, self.x(), self.y(), index)
-        else:
-            self.networkcode.broadcastMovement(self.playerName, self.x(), self.y(), index)
+        if self.networkcode is not None:
+            if isinstance(self.networkcode, NetworkClientCode):
+                self.networkcode.sendplayerPosition(self.playerName, self.x(), self.y(), index)
+            else:
+                self.networkcode.broadcastMovement(self.playerName, self.x(), self.y(), index)
 
 
     def checkifCollision(self, key):
