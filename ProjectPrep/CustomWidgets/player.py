@@ -63,33 +63,34 @@ class Player(QGraphicsPixmapItem):
 
     def movePlayer(self, key):
         # if it's not killable, means player died and cannot move
-        index = 0
-        if key == self.keybed[0]:
-            if self.pos().x() + 15 <= 790:
-                self.moveBy(15, 0)
-                self.checkifCollision(key)
-        elif key == self.keybed[1]:
-            if self.pos().y() + 15 <= 530:
-                self.moveBy(0, 15)
-                self.checkifCollision(key)
-                index = 1
-        elif key == self.keybed[2]:
-            if self.pos().y() - 15 >= 0:
-                self.moveBy(0, -15)
-                self.checkifCollision(key)
-                index = 2
-        elif key == self.keybed[3]:
-            if self.pos().x() - 15 >= 150:
-                self.moveBy(-15, 0)
-                self.checkifCollision(key)
-                index = 3
+        if self.killable == True:
+            index = 0
+            if key == self.keybed[0]:
+                if self.pos().x() + 15 <= 790:
+                    self.moveBy(15, 0)
+                    self.checkifCollision(key)
+            elif key == self.keybed[1]:
+                if self.pos().y() + 15 <= 530:
+                    self.moveBy(0, 15)
+                    self.checkifCollision(key)
+                    index = 1
+            elif key == self.keybed[2]:
+                if self.pos().y() - 15 >= 0:
+                    self.moveBy(0, -15)
+                    self.checkifCollision(key)
+                    index = 2
+            elif key == self.keybed[3]:
+                if self.pos().x() - 15 >= 150:
+                    self.moveBy(-15, 0)
+                    self.checkifCollision(key)
+                    index = 3
 
         # TODO send position to host.
-        if self.networkcode is not None:
-            if isinstance(self.networkcode, NetworkClientCode):
-                self.networkcode.sendplayerPosition(self.playerName, self.x(), self.y(), index)
-            else:
-                self.networkcode.broadcastMovement(self.playerName, self.x(), self.y(), index)
+            if self.networkcode is not None:
+                if isinstance(self.networkcode, NetworkClientCode):
+                    self.networkcode.sendplayerPosition(self.playerName, self.x(), self.y(), index)
+                else:
+                    self.networkcode.broadcastMovement(self.playerName, self.x(), self.y(), index)
 
 
     def checkifCollision(self, key):
