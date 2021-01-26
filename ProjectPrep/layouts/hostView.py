@@ -93,6 +93,7 @@ class HostView(QGraphicsView):
         self.host.broadcastdictionary(dict)
         self.boardgame = self.viewlist.widget(2)
         self.boardgame.initPlayers(self.players, 3, self.host)
+        self.host.updateposition.connect(self.boardgame.networkPlayerPosition)
         self.viewlist.setCurrentWidget(self.boardgame)
 
     def setbackground(self):

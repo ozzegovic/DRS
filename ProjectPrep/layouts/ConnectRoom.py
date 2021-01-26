@@ -81,5 +81,7 @@ class ConnectRoom(QGraphicsView):
     def play(self):
         self.client = NetworkClientCode()
         self.client.signal.connect(self.setGameDictionary)
+        board = self.viewlist.widget(2)
+        self.client.updateposition.connect(board.networkPlayerPosition)
         self.client.setnameandCar(self.inputFrame.playerName, self.inputFrame.Car)
         self.client.sendSignUpMessage()

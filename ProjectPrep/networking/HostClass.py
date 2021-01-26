@@ -49,11 +49,16 @@ class NetworkHost(QObject):
                 self.addPlayerFrameSignal.emit(messageSplit[1], messageSplit[2])
                 print(messageSplit[1])
             elif message.startswith('m'):
-                pass # TODO obraditi dobijen move.
+                info = message.split(',')
+                self.updateposition.emit(info[1], float(info[2]), float(info[3]), int(info[4]))
+                self.broadcastMovement(info[1], float(info[2]), float(info[3]), int(info[4]))
             elif message.startswith('e'):
                 break
         print('closed')
         connection.close()
+
+    def getName(self):
+        return self.name
 
     def broadcastdictionary(self, dict):
         print("send to clients")
@@ -70,6 +75,8 @@ class NetworkHost(QObject):
         # Ovde prvo emitovati kod sebe player poziciju, a zatim i broadcastovati klijentima.
         # Ovo je pomeraj klijenta, koji se broadcastoju ostalim klijentima.
         # Poziva se iz startrecva.
+        for client in self.Clients:
+            client.send(str.encode('m,' + str(player) + ',' + str(x) + ',' + str(y) + ',' + str(keyindex)))
 
     def broadcastServerMoveToClients(self, player, x, y, keyindex):
         pass # TODO

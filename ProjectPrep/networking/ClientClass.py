@@ -38,7 +38,11 @@ class NetworkClientCode(QObject):
         clientThread = threading.Thread(target=self.serverResponce, args=(self.ClientSocket,))
         clientThread.start()
 
+    def getName(self):
+        return self.name
+
         # nakon prijema emitovati signal metodi Client viewa da zapocne igru s tim recnikom.
+
 
     def serverResponce(self,connection):
         print("LISTENING")
@@ -50,12 +54,13 @@ class NetworkClientCode(QObject):
         while True:
             message = self.ClientSocket.recv(200).decode('utf-8')
             if message.startswith('m'):
-                pass # TODO
+                msg = message.split(',')
+                self.updateposition.emit(msg[1], float(msg[2]), float(msg[3]), int(msg[4]))
             elif message.startswith('o'):
                 pass # TODO
             elif message.startswith('e'):
                 pass
         self.ClientSocket.close()
 
-    def sendplayerPosition(self, x, y, keyindex):
-        self.ClientSocket.send(str.encode('m,' + self.name + ',' + str(x) + ',' + str(y) + ',' + str(keyindex)))
+    def sendplayerPosition(self, name, x, y, keyindex):
+        self.ClientSocket.send(str.encode('m,' + name + ',' + str(x) + ',' + str(y) + ',' + str(keyindex)))

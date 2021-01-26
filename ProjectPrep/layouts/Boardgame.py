@@ -118,6 +118,7 @@ class Boardgame(QGraphicsView):
     # add players to the boardgame
     def initPlayers(self, players, gametype, networkCode=None):
         self.players.clear()
+        #host
         self.networkcode = networkCode
 
         self.i = 0
@@ -282,35 +283,52 @@ class Boardgame(QGraphicsView):
 
     @pyqtSlot(str, float, float, int)
     def networkPlayerPosition(self, name, x, y, keyindex):
-        pass # TODO
+        for player in self.players:
+            if player.playerName == name:
+                player.setPos(x, y)
+                player.checkifCollision(self.keybed1[keyindex])
+
 
     def keyPressEvent(self, event) -> None:
-        if event.key() in self.keybed1:
-            self.players[0].keyPressEvent(event)
-
-        if len(self.players) >= 2:
-            if event.key() in self.keybed2:
-                self.players[1].keyPressEvent(event)
-        if len(self.players) >= 3:
-            if event.key() in self.keybed3:
-                self.players[2].keyPressEvent(event)
-        if len(self.players) >= 4:
-            if event.key() in self.keybed4:
-                self.players[3].keyPressEvent(event)
+        if self.gametype == 3:
+            if event.key() in self.keybed1:
+                name = self.networkcode.getName()
+                for player in self.players:
+                    if player.playerName == name:
+                        player.keyPressEvent(event)
+        else:
+            if event.key() in self.keybed1:
+                self.players[0].keyPressEvent(event)
+            if len(self.players) >= 2:
+                if event.key() in self.keybed2:
+                    self.players[1].keyPressEvent(event)
+            if len(self.players) >= 3:
+                if event.key() in self.keybed3:
+                    self.players[2].keyPressEvent(event)
+            if len(self.players) >= 4:
+                if event.key() in self.keybed4:
+                    self.players[3].keyPressEvent(event)
 
     def keyReleaseEvent(self, event) -> None:
-        if event.key() in self.keybed1:
-            self.players[0].keyReleaseEvent(event)
+        if self.gametype == 3:
+            if event.key() in self.keybed1:
+                name = self.networkcode.getName()
+                for player in self.players:
+                    if player.playerName == name:
+                        player.keyReleaseEvent(event)
+        else:
+            if event.key() in self.keybed1:
+                self.players[0].keyReleaseEvent(event)
 
-        if len(self.players) >= 2:
-            if event.key() in self.keybed2:
-                self.players[1].keyReleaseEvent(event)
-        if len(self.players) >= 3:
-            if event.key() in self.keybed3:
-                self.players[2].keyReleaseEvent(event)
-        if len(self.players) >= 4:
-            if event.key() in self.keybed4:
-                self.players[3].keyReleaseEvent(event)
+            if len(self.players) >= 2:
+                if event.key() in self.keybed2:
+                    self.players[1].keyReleaseEvent(event)
+            if len(self.players) >= 3:
+                if event.key() in self.keybed3:
+                    self.players[2].keyReleaseEvent(event)
+            if len(self.players) >= 4:
+                if event.key() in self.keybed4:
+                    self.players[3].keyReleaseEvent(event)
 
     @pyqtSlot()
     def checkCollision(self):
@@ -385,4 +403,3 @@ class Boardgame(QGraphicsView):
                 self.View.lastPlayer(playerName,playerCar)
                 self.stopThreads()
                 self.viewlist.setCurrentWidget(self.View)
-
