@@ -43,8 +43,7 @@ class NetworkClientCode(QObject):
 
         # nakon prijema emitovati signal metodi Client viewa da zapocne igru s tim recnikom.
 
-
-    def serverResponce(self,connection):
+    def serverResponce(self, connection):
         print("LISTENING")
         data = connection.recv(1000)
         message : str = data.decode('utf-8')
@@ -57,10 +56,19 @@ class NetworkClientCode(QObject):
                 msg = message.split(',')
                 self.updateposition.emit(msg[1], float(msg[2]), float(msg[3]), int(msg[4]))
             elif message.startswith('o'):
-                pass # TODO
+                self.parseObstacleMessage(message)
             elif message.startswith('e'):
                 pass
         self.ClientSocket.close()
 
     def sendplayerPosition(self, name, x, y, keyindex):
         self.ClientSocket.send(str.encode('m,' + name + ',' + str(x) + ',' + str(y) + ',' + str(keyindex)))
+
+    def parseObstacleMessage(self, message):
+        parts = message.split(',')
+        if len(parts) != 6:
+            print('Obstacles message - invalid format.')
+            return
+        else:
+            visible = True if parts[5] == 'True' else False
+            self.updateobstacles.emit(int(parts[1]), int(parts[2]), int(parts[3]), int(parts[4]), visible)
