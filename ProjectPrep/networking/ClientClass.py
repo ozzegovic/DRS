@@ -20,16 +20,20 @@ class NetworkClientCode(QObject):
         self.name = ''
         self.car = 1
 
-    def setnameandCar(self, name, car):
+    def setnameandCar(self, connectroom, name, car):
 
-        self.name = name
-        self.car = car
+        if name != "":
+            self.name = name
+            self.car = car
+        else:
+            connectroom.setInfoLabelText(3)
 
         try:
             self.ClientSocket.connect((self.host, self.port))
+            self.sendSignUpMessage()
+            connectroom.setInfoLabelText(2)
         except socket.error as e:
-            print(str(e))
-
+            connectroom.setInfoLabelText(1)
 
         #start thread to send sign up message
     def sendSignUpMessage(self):
