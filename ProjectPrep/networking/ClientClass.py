@@ -20,15 +20,21 @@ class NetworkClientCode(QObject):
         self.name = ''
         self.car = 1
 
-    def setnameandCar(self, name, car):
+    def setnameandCar(self, connectroom, name, car):
 
-        self.name = name
-        self.car = car
+        if name != "":
+            self.name = name
+            self.car = car
+        else:
+            connectroom.setInfoLabelText(3)
 
         try:
             self.ClientSocket.connect((self.host, self.port))
+            self.sendSignUpMessage()
+            connectroom.setInfoLabelText(2)
         except socket.error as e:
-            print(str(e))
+            connectroom.setInfoLabelText(1)
+
 
     def disconnect(self):
         self.ClientSocket.send(str.encode('d,' + str(self.name)))
@@ -60,7 +66,8 @@ class NetworkClientCode(QObject):
             elif message.startswith('o'):
                 self.parseObstacleMessage(message)
             elif message.startswith('e'):
-                pass
+                self.ClientSocket.send(str.encode('e'))
+                break
         self.ClientSocket.close()
 
     def sendplayerPosition(self, name, x, y, keyindex):

@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QGraphicsView, QGraphicsScene, QVBoxLayout, QHBoxLayout
-from PyQt5.QtWidgets import QGraphicsPixmapItem, QStackedWidget, QLabel
+from PyQt5.QtWidgets import QGraphicsPixmapItem, QStackedWidget, QLabel, QLineEdit
 from PyQt5.QtCore import Qt, QPoint, pyqtSlot
 from PyQt5.QtGui import QPixmap, QPainter
 from ProjectPrep.CustomWidgets.CustomButton import StyleButton
@@ -32,6 +32,21 @@ class ConnectRoom(QGraphicsView):
         self.holder = QVBoxLayout()
         self.playerLayout = QHBoxLayout()
         self.buttonsLayout = QHBoxLayout()
+        self.hostLayout = QHBoxLayout()
+
+        self.ipLabel = QLabel()
+        self.ipLabel.setText("ENTER HOST ADDRESS: ")
+        self.ipLabel.setFixedWidth(150)
+        self.ipLabel.setStyleSheet('color: yellow; font-weight: bold; background: transparent;')
+
+        self.hostText = QLineEdit()
+        self.hostText.setFixedWidth(150)
+        self.hostText.setStyleSheet('color: yellow; font-weight: bold; background: transparent;')
+        self.hostText.setAlignment(Qt.AlignLeft)
+
+        self.hostLayout.addWidget(self.ipLabel)
+        self.hostLayout.addWidget(self.hostText)
+        self.hostLayout.setAlignment(Qt.AlignJustify)
 
         self.titleLabel = QLabel()
         self.titleLabel.setText("ENTER A NAME AND CHOOSE A CAR:")
@@ -48,6 +63,7 @@ class ConnectRoom(QGraphicsView):
         self.infoLabel.setStyleSheet('color: yellow; font-weight: bold; background: transparent;')
         self.infoLabel.setAlignment(Qt.AlignCenter)
 
+        self.holder.addLayout(self.hostLayout)
         self.holder.addWidget(self.titleLabel)
         self.holder.addLayout(self.playerLayout)
         self.holder.addWidget(self.infoLabel)
@@ -79,18 +95,48 @@ class ConnectRoom(QGraphicsView):
         self.grafickascena.addItem(self.graphicsPixmapItem)
 
     def backtomenu(self):
+        self.setInfoLabelText(0)
         if self.client is not None:
             self.client.disconnect()
         self.connected = False
         self.viewlist.setCurrentWidget(self.viewlist.widget(0))
 
     def play(self):
+        self.resetLabelStyle()
         if self.connected == True:
             return
         self.client = NetworkClientCode()
+        self.client.host = self.hostText.text() # get input address
+        print(self.hostText.text())
         self.client.signal.connect(self.setGameDictionary)
         board = self.viewlist.widget(2)
         self.client.updateposition.connect(board.networkPlayerPosition)
-        self.client.setnameandCar(self.inputFrame.playerName, self.inputFrame.Car)
-        self.client.sendSignUpMessage()
+        self.client.setnameandCar(self, self.inputFrame.playerName, self.inputFrame.Car)
+        #self.client.sendSignUpMessage()
         self.connected = True
+
+    def setInfoLabelText(self, error):
+        if error == 0:
+            self.infoLabel.setText("")
+            self.hostText.setText("")
+            self.resetLabelStyle()
+
+        elif error == 1:
+            self.hostText.setStyleSheet('color: yellow; font-weight: bold; background: transparent; border: 3px solid red;')
+            self.infoLabel.setText("Cannot connect to host. Check input fields.")
+            self.infoLabel.adjustSize()
+        elif error == 2:
+            self.hostText.setStyleSheet('color: yellow; font-weight: bold; background: transparent;')
+            self.infoLabel.setText("Connected. Waiting...")
+            self.infoLabel.adjustSize()
+        elif error == 3:
+            self.inputFrame.playerNameEdit.setStyleSheet('color: yellow; font-weight: bold; background: transparent; border: 3px solid red;')
+            self.infoLabel.setText("Cannot connect to host. Check input fields.")
+            self.infoLabel.adjustSize()
+
+    def resetLabelStyle(self):
+            self.hostText.setStyleSheet(
+                'color: yellow; font-weight: bold; background: transparent;')
+            self.inputFrame.playerNameEdit.setStyleSheet(
+                'color: yellow; font-weight: bold; background: transparent;')
+            self.infoLabel.adjustSize()

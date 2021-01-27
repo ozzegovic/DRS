@@ -17,7 +17,8 @@ class NetworkHost(QObject):
     def __init__(self):
         super().__init__()
         self.ServerSocket = socket.socket()
-        self.host = '127.0.0.1'
+        hostname = socket.gethostname()
+        self.host = socket.gethostbyname(hostname)
         self.id = True
         self.port = 7333
         self.name = ''
@@ -28,16 +29,16 @@ class NetworkHost(QObject):
         self.Clients = []
 
     def starthost(self):
-
         try:
             self.ServerSocket.bind((self.host, self.port))
             self.ServerSocket.setblocking(0)
+
+            self.ServerSocket.listen(3)
+            self.listenKill = False
+            threading.Thread(target=self.startlistenloop).start()
+
         except socket.error as e:
             print(str(e))
-
-        self.ServerSocket.listen(3)
-        self.listenKill = False
-        threading.Thread(target=self.startlistenloop).start()
 
     def startrecv(self, connection):
 
@@ -73,6 +74,8 @@ class NetworkHost(QObject):
         for client in self.Clients:
             client.send(str.encode(jsondict))
 
+        self.listenKill = True
+
     def broadcastObstacles(self, index, x, y, pic, visible):
         # Ovom metodom poslati upakovan string broadcast klijentima o prepreci.
         message = str.encode('o,' + str(index) + ',' + str(x) + ',' + str(y) + ',' + str(pic) + ',' + str(visible))
@@ -107,3 +110,7 @@ class NetworkHost(QObject):
                 pass
             time.sleep(5)
         self.ServerSocket.close()
+
+    def stopNetworkThreads(self):
+        for client in self.connectionlist:
+            client.send(str.encode('e'))
