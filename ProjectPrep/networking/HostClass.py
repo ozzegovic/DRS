@@ -12,6 +12,7 @@ class NetworkHost(QObject):
     signal = pyqtSignal(dict) # konektovati gde treba
     addPlayerFrameSignal = pyqtSignal(str, str)
     updateposition = pyqtSignal(str, float, float, int)
+    disconnectplayer = pyqtSignal(str)
 
     def __init__(self):
         super().__init__()
@@ -45,6 +46,8 @@ class NetworkHost(QObject):
             #reply = 'Server Says: ' + data.decode('utf-8')
             message : str = data.decode('utf-8')
             if message.startswith('s'):
+                # if connection in self.Clients:
+                #     return
                 messageSplit = message.split(',')
                 self.addPlayerFrameSignal.emit(messageSplit[1], messageSplit[2])
                 print(messageSplit[1])
@@ -52,10 +55,14 @@ class NetworkHost(QObject):
                 info = message.split(',')
                 self.updateposition.emit(info[1], float(info[2]), float(info[3]), int(info[4]))
                 self.broadcastMovement(info[1], float(info[2]), float(info[3]), int(info[4]))
+            elif message.startswith('d'):
+                name = message.split(',')[1]
+                self.disconnectplayer.emit(name)
             elif message.startswith('e'):
                 break
         print('closed')
         connection.close()
+
 
     def getName(self):
         return self.name

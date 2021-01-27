@@ -30,6 +30,8 @@ class NetworkClientCode(QObject):
         except socket.error as e:
             print(str(e))
 
+    def disconnect(self):
+        self.ClientSocket.send(str.encode('d,' + str(self.name)))
 
         #start thread to send sign up message
     def sendSignUpMessage(self):

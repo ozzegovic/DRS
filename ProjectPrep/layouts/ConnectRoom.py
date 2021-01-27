@@ -14,6 +14,8 @@ class ConnectRoom(QGraphicsView):
         super(ConnectRoom, self).__init__()
         self.inputFrame = InputOkvir(1)
         self.viewlist = centralWidget
+        self.client = None
+        self.connected = False
         self.initUI()
 
     def initUI(self):
@@ -77,12 +79,18 @@ class ConnectRoom(QGraphicsView):
         self.grafickascena.addItem(self.graphicsPixmapItem)
 
     def backtomenu(self):
+        if self.client is not None:
+            self.client.disconnect()
+        self.connected = False
         self.viewlist.setCurrentWidget(self.viewlist.widget(0))
 
     def play(self):
+        if self.connected == True:
+            return
         self.client = NetworkClientCode()
         self.client.signal.connect(self.setGameDictionary)
         board = self.viewlist.widget(2)
         self.client.updateposition.connect(board.networkPlayerPosition)
         self.client.setnameandCar(self.inputFrame.playerName, self.inputFrame.Car)
         self.client.sendSignUpMessage()
+        self.connected = True

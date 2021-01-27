@@ -64,6 +64,13 @@ class HostView(QGraphicsView):
         #self.addHudOkvir("fgfer", "2")
         #self.chooseType()
 
+    @pyqtSlot(str)
+    def disconnect(self, name):
+        del(self.players[name])
+        for okvir in self.guestFrames:
+            if okvir.getNameAndCar()[0] == name:
+                okvir.setNameAndCar("", "")
+
     @pyqtSlot(str, str)
     def addHudOkvir(self, name, car):  # kada se igrac konektuje poziva ovo
         # index = len(self.players)
@@ -72,6 +79,7 @@ class HostView(QGraphicsView):
         #
         # index = self.guestFrames.index(self.newPlayerFrame)
         # self.guestsLayout.addWidget(self.guestFrames[index])
+
 
         if len(self.players) == 0:
             self.guestFrames[0].setNameAndCar(name, car)
@@ -85,6 +93,7 @@ class HostView(QGraphicsView):
     def startServerHosting(self):
 
         self.host = NetworkHost()
+        self.host.disconnectplayer.connect(self.disconnect)
         self.host.addPlayerFrameSignal.connect(self.addHudOkvir)
         self.host.starthost()
 
