@@ -97,9 +97,10 @@ class ConnectRoom(QGraphicsView):
         self.viewlist.setCurrentWidget(self.viewlist.widget(0))
 
     def play(self):
-        self.setInfoLabelText(0) # reset errors
+        self.resetLabelStyle() 
         self.client = NetworkClientCode()
         self.client.host = self.hostText.text() # get input address
+        print(self.hostText.text())
         self.client.signal.connect(self.setGameDictionary)
         board = self.viewlist.widget(2)
         self.client.updateposition.connect(board.networkPlayerPosition)
@@ -110,11 +111,7 @@ class ConnectRoom(QGraphicsView):
         if error == 0:
             self.infoLabel.setText("")
             self.hostText.setText("")
-            self.hostText.setStyleSheet(
-                'color: yellow; font-weight: bold; background: transparent;')
-            self.inputFrame.playerNameEdit.setStyleSheet(
-                'color: yellow; font-weight: bold; background: transparent;')
-            self.infoLabel.adjustSize()
+            self.resetLabelStyle()
 
         elif error == 1:
             self.hostText.setStyleSheet('color: yellow; font-weight: bold; background: transparent; border: 3px solid red;')
@@ -127,4 +124,11 @@ class ConnectRoom(QGraphicsView):
         elif error == 3:
             self.inputFrame.playerNameEdit.setStyleSheet('color: yellow; font-weight: bold; background: transparent; border: 3px solid red;')
             self.infoLabel.setText("Cannot connect to host. Check input fields.")
+            self.infoLabel.adjustSize()
+
+    def resetLabelStyle(self):
+            self.hostText.setStyleSheet(
+                'color: yellow; font-weight: bold; background: transparent;')
+            self.inputFrame.playerNameEdit.setStyleSheet(
+                'color: yellow; font-weight: bold; background: transparent;')
             self.infoLabel.adjustSize()
