@@ -296,7 +296,7 @@ class Boardgame(QGraphicsView):
                 visible = True
 
         if self.gametype == 3 and self.networkcode.id == True:
-            self.networkcode.broadcastObstacles(self.obstacles.index(Ob), x, y, Ob.getPixType(), visible)
+            self.networkcode.broadcastObstacles(self.obstacles.index(Ob), x, y, Ob.type, visible)
 
     @pyqtSlot(int, int, int, int, bool)
     def networkSetObstacles(self, index, x, y, type, visible):

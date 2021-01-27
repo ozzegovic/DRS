@@ -100,5 +100,4 @@ class Obstacle(QGraphicsPixmapItem):
 
         self.setPixmap(self.picture.scaledToWidth(self.width))
 
-    def getPixType(self):
-        return self.type
+

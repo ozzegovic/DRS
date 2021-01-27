@@ -22,6 +22,10 @@ class HostView(QGraphicsView):
         self.initUI()
 
     def initUI(self):
+        self.ipLabel = QLabel()
+        self.ipLabel.setStyleSheet('color: yellow; font-weight: bold; background: transparent;')
+        self.ipLabel.setAlignment(Qt.AlignCenter)
+
         self.titleLabel = QLabel()
         self.titleLabel.setText("ENTER YOUR NAME CHOOSE A CAR AND WAIT FOR PLAYERS TO JOIN")
         self.titleLabel.setStyleSheet('color: yellow; font-weight: bold; background: transparent;')
@@ -50,7 +54,7 @@ class HostView(QGraphicsView):
         for i in range(0, len(self.guestFrames)):
             self.guestsLayout.addWidget(self.guestFrames[i])
 
-
+        self.holder.addWidget(self.ipLabel)
         self.holder.addWidget(self.titleLabel)
         self.holder.addLayout(self.hostLayout)
         self.holder.addLayout(self.guestsLayout)
@@ -83,10 +87,11 @@ class HostView(QGraphicsView):
         self.players[name] = car #ubacuje se u grupu igraca
 
     def startServerHosting(self):
-
         self.host = NetworkHost()
         self.host.addPlayerFrameSignal.connect(self.addHudOkvir)
         self.host.starthost()
+        self.ipLabel.setText("MY IP ADDRESS: " + self.host.host)
+        self.ipLabel.adjustSize()
 
     # Connect this.
     def setGameDictionary(self, dict):
