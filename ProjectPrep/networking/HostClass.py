@@ -43,7 +43,10 @@ class NetworkHost(QObject):
     def startrecv(self, connection):
 
         while True:
-            data = connection.recv(200)
+            try:
+                data = connection.recv(200)
+            except:
+                return
             #reply = 'Server Says: ' + data.decode('utf-8')
             message : str = data.decode('utf-8')
             if message.startswith('s'):
@@ -58,6 +61,9 @@ class NetworkHost(QObject):
                 self.broadcastMovement(info[1], float(info[2]), float(info[3]), int(info[4]))
             elif message.startswith('d'):
                 name = message.split(',')[1]
+                for client in self.Clients:
+                    if client == connection:
+                        client.shutdown(socket.SHUT_RDWR)
                 self.disconnectplayer.emit(name)
             elif message.startswith('e'):
                 break
@@ -72,24 +78,30 @@ class NetworkHost(QObject):
         print("send to clients")
         jsondict = json.dumps(dict)
         for client in self.Clients:
-            client.send(str.encode(jsondict))
-
+            try:
+                client.send(str.encode(jsondict))
+            except:
+                continue
         self.listenKill = True
 
     def broadcastObstacles(self, index, x, y, pic, visible):
         # Ovom metodom poslati upakovan string broadcast klijentima o prepreci.
         message = str.encode('o,' + str(index) + ',' + str(x) + ',' + str(y) + ',' + str(pic) + ',' + str(visible))
         for client in self.Clients:
-            client.send(message)
-
+            try:
+                client.send(message)
+            except:
+                continue
     def broadcastMovement(self, player, x, y, keyindex):
         pass # TODO
         # Ovde prvo emitovati kod sebe player poziciju, a zatim i broadcastovati klijentima.
         # Ovo je pomeraj klijenta, koji se broadcastoju ostalim klijentima.
         # Poziva se iz startrecva.
         for client in self.Clients:
-            client.send(str.encode('m,' + str(player) + ',' + str(x) + ',' + str(y) + ',' + str(keyindex)))
-
+            try:
+                client.send(str.encode('m,' + str(player) + ',' + str(x) + ',' + str(y) + ',' + str(keyindex)))
+            except:
+                continue
     def broadcastServerMoveToClients(self, player, x, y, keyindex):
         pass # TODO
         # Ovde broadcastovati samo klijentima ne emitovati kod sebe, jer je
@@ -109,7 +121,7 @@ class NetworkHost(QObject):
                 #print('here')
                 pass
             time.sleep(5)
-        self.ServerSocket.close()
+        self.ServerSocket.shutdown(socket.SHUT_RDWR)
 
     def stopNetworkThreads(self):
         for client in self.connectionlist:

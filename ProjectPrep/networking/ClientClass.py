@@ -19,6 +19,7 @@ class NetworkClientCode(QObject):
         self.id = False
         self.name = ''
         self.car = 1
+        self.clientThread = None
 
     def setnameandCar(self, connectroom, name, car):
 
@@ -40,13 +41,15 @@ class NetworkClientCode(QObject):
 
     def disconnect(self):
         self.ClientSocket.send(str.encode('d,' + str(self.name)))
+        self.ClientSocket.shutdown(socket.SHUT_RDWR)
+
 
         #start thread to send sign up message
     def sendSignUpMessage(self):
         self.ClientSocket.send(str.encode('s,' + str(self.name) + ',' + str(self.car))) # salje se prijava korisnika.
         print("Poslato")
-        clientThread = threading.Thread(target=self.serverResponce, args=(self.ClientSocket,))
-        clientThread.start()
+        self.clientThread = threading.Thread(target=self.serverResponce, args=(self.ClientSocket,))
+        self.clientThread.start()
 
     def getName(self):
         return self.name
@@ -55,10 +58,13 @@ class NetworkClientCode(QObject):
 
     def serverResponce(self, connection):
         print("LISTENING")
-        data = connection.recv(1000)
-        message : str = data.decode('utf-8')
-        dict = json.loads(message)
-        self.signal.emit(dict)
+        try:
+            data = connection.recv(1000)
+            message : str = data.decode('utf-8')
+            dict = json.loads(message)
+            self.signal.emit(dict)
+        except:
+            return
 
         while True:
             message = self.ClientSocket.recv(200).decode('utf-8')
@@ -70,7 +76,7 @@ class NetworkClientCode(QObject):
             elif message.startswith('e'):
                 self.ClientSocket.send(str.encode('e'))
                 break
-        self.ClientSocket.close()
+        self.ClientSocketshutdown(socket.SHUT_RDWR)
 
     def sendplayerPosition(self, name, x, y, keyindex):
         self.ClientSocket.send(str.encode('m,' + name + ',' + str(x) + ',' + str(y) + ',' + str(keyindex)))
