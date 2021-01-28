@@ -70,10 +70,11 @@ class HostView(QGraphicsView):
 
     @pyqtSlot(str)
     def disconnect(self, name):
-        del(self.players[name])
-        for okvir in self.guestFrames:
-            if okvir.getNameAndCar()[0] == name:
-                okvir.setNameAndCar("", "")
+        if self.players.get(name) != None:
+            del self.players[name]
+            for okvir in self.guestFrames:
+                if okvir.getNameAndCar()[0] == name:
+                    okvir.setNameAndCar("", "")
 
     @pyqtSlot(str, str)
     def addHudOkvir(self, name, car):  # kada se igrac konektuje poziva ovo
@@ -130,6 +131,7 @@ class HostView(QGraphicsView):
         #     self.guestFrames[i].deleteLater()
 
         self.resetPlayers()
+        self.host.listenKill = True
         self.viewlist.setCurrentWidget(self.viewlist.widget(0))
 
     def resetPlayers(self):

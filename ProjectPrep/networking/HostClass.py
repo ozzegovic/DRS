@@ -115,7 +115,7 @@ class NetworkHost(QObject):
                 clientThread.start()
             except:
                 pass
-            time.sleep(5)
+            time.sleep(1)
         #self.ServerSocket.shutdown(socket.SHUT_RDWR)
         self.ServerSocket.close()
 
