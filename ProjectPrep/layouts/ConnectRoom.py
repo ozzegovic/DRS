@@ -111,9 +111,8 @@ class ConnectRoom(QGraphicsView):
         self.client.signal.connect(self.setGameDictionary)
         board = self.viewlist.widget(2)
         self.client.updateposition.connect(board.networkPlayerPosition)
-        self.client.setnameandCar(self, self.inputFrame.playerName, self.inputFrame.Car)
+        self.connected = self.client.setnameandCar(self, self.inputFrame.playerName, self.inputFrame.Car)
         #self.client.sendSignUpMessage()
-        self.connected = True
 
     def setInfoLabelText(self, error):
         if error == 0:

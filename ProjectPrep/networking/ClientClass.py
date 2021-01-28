@@ -32,8 +32,10 @@ class NetworkClientCode(QObject):
             self.ClientSocket.connect((self.host, self.port))
             self.sendSignUpMessage()
             connectroom.setInfoLabelText(2)
+            return True
         except socket.error as e:
             connectroom.setInfoLabelText(1)
+            return False
 
 
     def disconnect(self):
