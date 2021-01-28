@@ -1,6 +1,6 @@
 import socket
 import threading
-import time, json
+import time, json, re
 from threading import Thread
 from PyQt5.QtCore import QThread, QObject, pyqtSlot, pyqtSignal
 from ProjectPrep.layouts.boardNotifier import Worker
@@ -40,9 +40,10 @@ class NetworkClientCode(QObject):
 
 
     def disconnect(self):
-        self.ClientSocket.send(str.encode('d,' + str(self.name)))
-        self.ClientSocket.shutdown(socket.SHUT_RDWR)
-
+        try:
+            self.ClientSocket.send(str.encode('d,' + str(self.name)))
+        except:
+            self.ClientSocket.close()
 
         #start thread to send sign up message
     def sendSignUpMessage(self):
@@ -70,16 +71,22 @@ class NetworkClientCode(QObject):
             message = self.ClientSocket.recv(200).decode('utf-8')
             if message.startswith('m'):
                 msg = message.split(',')
-                self.updateposition.emit(msg[1], float(msg[2]), float(msg[3]), int(msg[4]))
+                keyindex = int(re.sub("[^0-9]", "", msg[4]))
+                if msg[1] != self.name:
+                    self.updateposition.emit(msg[1], float(msg[2]), float(msg[3]), keyindex)
             elif message.startswith('o'):
                 self.parseObstacleMessage(message)
             elif message.startswith('e'):
                 self.ClientSocket.send(str.encode('e'))
                 break
-        self.ClientSocketshutdown(socket.SHUT_RDWR)
+        #self.ClientSocketshutdown(socket.SHUT_RDWR)
+        self.ClientSocket.close()
 
     def sendplayerPosition(self, name, x, y, keyindex):
-        self.ClientSocket.send(str.encode('m,' + name + ',' + str(x) + ',' + str(y) + ',' + str(keyindex)))
+        try:
+            self.ClientSocket.send(str.encode('m,' + name + ',' + str(x) + ',' + str(y) + ',' + str(keyindex)))
+        except:
+            pass
 
     def parseObstacleMessage(self, message):
         parts = message.split(',')

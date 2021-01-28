@@ -40,6 +40,10 @@ class Boardgame(QGraphicsView):
         self.timer = QtCore.QTimer(self)
         self.timer.timeout.connect(self.speedUp)
 
+        self.workertimer = QtCore.QTimer(self)
+        self.workertimer.timeout.connect(self.movepicture)
+        self.workertimer.timeout.connect(self.moveObstacle)
+
         self.players = []  # moving cars
         self.deaths = [0, 0, 0, 0] #number of deaths per player
 
@@ -63,13 +67,15 @@ class Boardgame(QGraphicsView):
         self.nextBackground = 1
 
     def activateThreads(self):
-        self.worker.start() # resume option, not reseting obstacle position
+        #self.worker.start() # resume option, not reseting obstacle position
         self.collisionNotifier.start()
         self.activatePlayerThreads()  # for each player start key notifier thread
         self.timer.start(5000)
+        self.workertimer.start(10)
 
     def stopThreads(self):
-        self.worker.stop()
+        #self.worker.stop()
+        self.workertimer.stop()
         self.collisionNotifier.stop()
         self.stopPlayerThreads()    # for each player stop key notifier thread
         self.timer.stop()
@@ -134,6 +140,8 @@ class Boardgame(QGraphicsView):
             self.players.append(self.player)
             self.grafickascena.addItem(self.player)
             self.i = self.i + 1
+
+        self.gametype = gametype
         self.restart()
 
         if gametype == 3:
@@ -147,8 +155,6 @@ class Boardgame(QGraphicsView):
         self.hud.initHudFrames(self.players)
         if gametype == 1:# 1v1 turnir
             self.hud.setMode(1)
-
-        self.gametype = gametype
 
     # remove each car from the graphics scene, stop all threads, delete players list
     def deletePlayers(self):

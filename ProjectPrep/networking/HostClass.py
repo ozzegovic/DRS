@@ -57,19 +57,19 @@ class NetworkHost(QObject):
                 print(messageSplit[1])
             elif message.startswith('m'):
                 info = message.split(',')
-                self.updateposition.emit(info[1], float(info[2]), float(info[3]), int(info[4]))
-                self.broadcastMovement(info[1], float(info[2]), float(info[3]), int(info[4]))
+                keyindex = int(re.sub("[^0-9]", "", info[4]))
+                self.updateposition.emit(info[1], float(info[2]), float(info[3]), keyindex)
+                self.broadcastMovement(info[1], float(info[2]), float(info[3]), keyindex)
             elif message.startswith('d'):
                 name = message.split(',')[1]
                 for client in self.Clients:
                     if client == connection:
-                        client.shutdown(socket.SHUT_RDWR)
+                        client.close()
                 self.disconnectplayer.emit(name)
             elif message.startswith('e'):
                 break
         print('closed')
         connection.close()
-
 
     def getName(self):
         return self.name
@@ -102,10 +102,6 @@ class NetworkHost(QObject):
                 client.send(str.encode('m,' + str(player) + ',' + str(x) + ',' + str(y) + ',' + str(keyindex)))
             except:
                 continue
-    def broadcastServerMoveToClients(self, player, x, y, keyindex):
-        pass # TODO
-        # Ovde broadcastovati samo klijentima ne emitovati kod sebe, jer je
-        # ovo samo pomeraj koji host pravi.
 
     def startlistenloop(self):
 
@@ -118,11 +114,14 @@ class NetworkHost(QObject):
                 clientThread = threading.Thread(target=self.startrecv, args=(Client, ))
                 clientThread.start()
             except:
-                #print('here')
                 pass
             time.sleep(5)
-        self.ServerSocket.shutdown(socket.SHUT_RDWR)
+        #self.ServerSocket.shutdown(socket.SHUT_RDWR)
+        self.ServerSocket.close()
 
     def stopNetworkThreads(self):
-        for client in self.connectionlist:
-            client.send(str.encode('e'))
+        for client in self.Clients:
+            try:
+                client.send(str.encode('e'))
+            except:
+                pass
