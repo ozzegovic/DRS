@@ -63,7 +63,6 @@ class Player(QGraphicsPixmapItem):
 
     def movePlayer(self, key):
         # if it's not killable, means player died and cannot move
-        if self.killable == True:
             index = 0
             if key == self.keybed[0]:
                 if self.pos().x() + 15 <= 790:
@@ -162,7 +161,6 @@ class Player(QGraphicsPixmapItem):
         self.effect.setEnabled(False)
         self.safeTimer.stop()
         self.killable = True
-        self.key_notifier.start()
 
     def addLife(self):
         if self.lives < 4:  # lives limited to 4
@@ -183,9 +181,7 @@ class Player(QGraphicsPixmapItem):
 
         self.notMoving.stop()
         self.canMove = True
-        if self.killable:
-            self.key_notifier.start()   # if didn't lose a life while unable to move, enable moving
-                                        # if died while unable to move, makeKillable will enable moving after the safe timer expires
+        self.key_notifier.start()
 
     def getNameCar(self):
         return self.playerName, self.Car
