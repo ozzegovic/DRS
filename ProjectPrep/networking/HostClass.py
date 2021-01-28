@@ -46,7 +46,7 @@ class NetworkHost(QObject):
             try:
                 data = connection.recv(200)
             except:
-                return
+                break
             #reply = 'Server Says: ' + data.decode('utf-8')
             message : str = data.decode('utf-8')
             if message.startswith('s'):
