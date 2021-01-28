@@ -21,6 +21,10 @@ class WinnerView(QGraphicsView):
         self.initUI()
 
     def initUI(self):
+
+        self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+
         self.holder = QVBoxLayout()
         self.playersLayout1 = QHBoxLayout()
         self.playersLayout2 = QHBoxLayout()

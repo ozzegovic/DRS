@@ -20,6 +20,9 @@ class ConnectRoom(QGraphicsView):
 
     def initUI(self):
 
+        self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+
         self.grafickascena = QGraphicsScene()
         self.grafickascena.setSceneRect(0, 0, 1000, 850)
 

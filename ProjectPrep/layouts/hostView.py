@@ -22,6 +22,10 @@ class HostView(QGraphicsView):
         self.initUI()
 
     def initUI(self):
+
+        self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+
         self.ipLabel = QLabel()
         self.ipLabel.setStyleSheet('color: yellow; font-weight: bold; background: transparent;')
         self.ipLabel.setAlignment(Qt.AlignCenter)
