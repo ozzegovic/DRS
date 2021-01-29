@@ -12,6 +12,9 @@ from ProjectPrep.CustomWidgets.CustomButton import StyleButton
 from ProjectPrep.layouts.boardNotifier import Worker
 from ProjectPrep.layouts.pauseView import pauseView
 from ProjectPrep.CustomWidgets.Obstacle import Obstacle
+from ProjectPrep.QtMpWorker.process_count import ProcessCount
+from ProjectPrep.QtMpWorker.worker_listen import WorkerListen
+import multiprocessing as mp
 
 class Boardgame(QGraphicsView):
 
@@ -44,17 +47,20 @@ class Boardgame(QGraphicsView):
         self.workertimer.timeout.connect(self.movepicture)
         self.workertimer.timeout.connect(self.moveObstacle)
 
+        self.collisionNotifier = Worker(100)
+        self.collisionNotifier.update.connect(self.checkCollision)
+
         self.players = []  # moving cars
         self.deaths = [0, 0, 0, 0] #number of deaths per player
 
-        self.worker = Worker(10)
-        self.worker.update.connect(self.movepicture)
+        #self.worker = Worker(10)
+        #self.worker.update.connect(self.movepicture)
+        #self.worker.update.connect(self.moveObstacle)
 
-        #self.obstaclethread = Worker(0.01)
-        self.worker.update.connect(self.moveObstacle)
-
-        self.collisionNotifier = Worker(100)
-        self.collisionNotifier.update.connect(self.checkCollision)
+        expipe, inpipe = mp.Pipe()
+        self.process = ProcessCount(expipe, 0.01)
+        self.listenerthread = WorkerListen(inpipe)
+        self.listenerthread.update.connect(self.checkCollision)
 
         # 1. step - set one transition image - self.graphicsPixmapItem set to transition image
         # 2. step - set transition image on one and new image on the other (the one that previously had the transition image)
@@ -68,15 +74,20 @@ class Boardgame(QGraphicsView):
 
     def activateThreads(self):
         #self.worker.start() # resume option, not reseting obstacle position
-        self.collisionNotifier.start()
+        #self.collisionNotifier.start()
+        self.process.startprocess()
+        self.listenerthread.start()
         self.activatePlayerThreads()  # for each player start key notifier thread
         self.timer.start(5000)
         self.workertimer.start(10)
 
     def stopThreads(self):
         #self.worker.stop()
+        #self.collisionNotifier.stop()
+        self.process.terminate()
+        self.process.join()
+        self.listenerthread.stop()
         self.workertimer.stop()
-        self.collisionNotifier.stop()
         self.stopPlayerThreads()    # for each player stop key notifier thread
         self.timer.stop()
         if self.gametype == 3 and self.networkcode.id:
